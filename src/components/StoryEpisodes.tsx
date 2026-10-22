@@ -19,8 +19,22 @@ export default function StoryEpisodes({ episodes = [] }: { episodes?: Episode[] 
       id: '1',
       title: 'The Pilot Episode: The First Hello',
       date: 'June 2020',
-      description: 'It started with a simple hello and turned into a lifetime together.',
+      description: 'A shared conversation over a quiet coffee that unexpectedly turned into hours of laughter, discovering how two very different worlds fit so effortlessly together.',
       photoUrl: 'https://images.unsplash.com/photo-1522673607200-164d1b6ce486?auto=format&fit=crop&w=800&q=80',
+    },
+    {
+      id: '2',
+      title: 'Season 2: Adventures Across the Miles',
+      date: 'March 2022',
+      description: 'From scenic road trips to exploring foreign streets, overcoming life storms and celebrating every little milestone hand-in-hand.',
+      photoUrl: 'https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?auto=format&fit=crop&w=800&q=80',
+    },
+    {
+      id: '3',
+      title: 'The Season Finale: Under the Stars',
+      date: 'December 2024',
+      description: 'With trembling hands and a heart full of devotion, Sandy asked the question that changed everything — and Bernadette said yes with tears of joy.',
+      photoUrl: 'https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?auto=format&fit=crop&w=800&q=80',
     },
   ];
 

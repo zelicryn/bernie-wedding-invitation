@@ -16,6 +16,10 @@ export default function Entourage({ members = [] }: { members?: CastMember[] }) 
   const displayMembers = members.length > 0 ? members : [
     { id: '1', name: 'Maria Santos', role: 'Maid of Honor', photoUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80' },
     { id: '2', name: 'Juan Cruz', role: 'Best Man', photoUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80' },
+    { id: '3', name: 'Camille Reyes', role: 'Bridesmaid', photoUrl: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=600&q=80' },
+    { id: '4', name: 'Mark Bautista', role: 'Groomsman', photoUrl: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=80' },
+    { id: '5', name: 'Patricia Gomez', role: 'Bridesmaid', photoUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=600&q=80' },
+    { id: '6', name: 'David Lee', role: 'Groomsman', photoUrl: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?auto=format&fit=crop&w=600&q=80' },
   ];
 
   return (

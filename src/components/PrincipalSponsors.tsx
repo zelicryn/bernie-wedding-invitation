@@ -17,11 +17,22 @@ interface PrincipalSponsorsProps {
   sponsors?: Sponsor[];
 }
 
+const DEFAULT_SPONSORS: Sponsor[] = [
+  { id: '1', name: 'Hon. Roberto Tan', gender: 'MALE', role: 'Principal Sponsor', order: 1 },
+  { id: '2', name: 'Dr. Evelyn Tan', gender: 'FEMALE', role: 'Principal Sponsor', order: 2 },
+  { id: '3', name: 'Mr. Antonio Morales', gender: 'MALE', role: 'Principal Sponsor', order: 3 },
+  { id: '4', name: 'Mrs. Cynthia Morales', gender: 'FEMALE', role: 'Principal Sponsor', order: 4 },
+  { id: '5', name: 'Atty. Fernando Reyes', gender: 'MALE', role: 'Principal Sponsor', order: 5 },
+  { id: '6', name: 'Mrs. Maria Elena Reyes', gender: 'FEMALE', role: 'Principal Sponsor', order: 6 },
+  { id: '7', name: 'Engr. Danilo Ramos', gender: 'MALE', role: 'Principal Sponsor', order: 7 },
+  { id: '8', name: 'Mrs. Corazon Ramos', gender: 'FEMALE', role: 'Principal Sponsor', order: 8 },
+];
+
 export default function PrincipalSponsors({ sponsors = [] }: PrincipalSponsorsProps) {
-  // If no sponsors provided, default sample list
-  const maleSponsors = sponsors.filter((s) => s.gender === 'MALE');
-  const femaleSponsors = sponsors.filter((s) => s.gender === 'FEMALE');
-  const couplesOrOthers = sponsors.filter((s) => s.gender !== 'MALE' && s.gender !== 'FEMALE');
+  const displaySponsors = sponsors.length > 0 ? sponsors : DEFAULT_SPONSORS;
+  const maleSponsors = displaySponsors.filter((s) => s.gender === 'MALE');
+  const femaleSponsors = displaySponsors.filter((s) => s.gender === 'FEMALE');
+  const couplesOrOthers = displaySponsors.filter((s) => s.gender !== 'MALE' && s.gender !== 'FEMALE');
 
   const hasGrouped = maleSponsors.length > 0 || femaleSponsors.length > 0;
 

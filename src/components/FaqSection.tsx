@@ -9,11 +9,57 @@ export interface FaqItem {
   order?: number;
 }
 
+const DEFAULT_FAQS: FaqItem[] = [
+  {
+    id: '1',
+    question: 'What is the dress code for the wedding?',
+    answer: 'The dress code is Formal / Black Tie. Gentlemen may wear a dark suit and tie or Barong Tagalog. Ladies are requested to wear floor-length long gowns in cinematic shades (Black, Emerald Green, Midnight Blue, Wine/Burgundy). Please reserve shades of white, cream, and ivory for the bride.',
+    order: 1,
+  },
+  {
+    id: '2',
+    question: 'Can I bring a plus one or additional guest?',
+    answer: 'Due to venue capacity restrictions and our personalized seating arrangement, we can only accommodate guests officially listed on your invitation. When searching your name in the RSVP section, you will see the exact number of seats reserved in your honor.',
+    order: 2,
+  },
+  {
+    id: '3',
+    question: 'Are children allowed at the wedding and reception?',
+    answer: 'While we love your little ones, our celebration will be an adults-only event, with the exception of children participating in the wedding entourage. We hope this gives you an opportunity to relax and enjoy the night with us!',
+    order: 3,
+  },
+  {
+    id: '4',
+    question: 'When is the deadline to RSVP?',
+    answer: 'Please confirm your attendance by November 15, 2026. This allows us to finalize our catering count, tables, and personalized place cards with the venue.',
+    order: 4,
+  },
+  {
+    id: '5',
+    question: 'What time should I arrive at the ceremony?',
+    answer: 'The ceremony starts promptly at 3:00 PM at Manila Cathedral. We kindly advise arriving between 2:15 PM and 2:30 PM to allow time for parking, registration, and seating before the procession begins.',
+    order: 5,
+  },
+  {
+    id: '6',
+    question: 'Is there parking available at both venues?',
+    answer: 'Yes! Parking is available around Plaza Roma and nearby pay parking lots in Intramuros for the ceremony. At The Manila Hotel, complimentary valet and self-parking are provided for all our wedding guests.',
+    order: 6,
+  },
+  {
+    id: '7',
+    question: 'Is it an unplugged ceremony?',
+    answer: 'Yes, we kindly request an unplugged ceremony. We have hired an amazing team of photographers and videographers to capture our sacred moments. We invite you to be fully present with us and keep phones and cameras away during the church ceremony.',
+    order: 7,
+  },
+];
+
 interface FaqSectionProps {
   faqs?: FaqItem[];
 }
 
 export default function FaqSection({ faqs = [] }: FaqSectionProps) {
+  const displayFaqs = faqs.length > 0 ? faqs : DEFAULT_FAQS;
   const [openIndex, setOpenIndex] = useState<number | null>(0); // First open by default
 
   const toggleAccordion = (index: number) => {
@@ -53,7 +99,7 @@ export default function FaqSection({ faqs = [] }: FaqSectionProps) {
       </div>
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-        {faqs.map((faq, index) => {
+        {displayFaqs.map((faq, index) => {
           const isOpen = openIndex === index;
           return (
             <div

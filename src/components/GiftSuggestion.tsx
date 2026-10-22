@@ -14,12 +14,52 @@ export interface GiftOptionItem {
   order?: number;
 }
 
+const DEFAULT_GIFTS: GiftOptionItem[] = [
+  {
+    id: '1',
+    type: 'GCash',
+    bankName: 'GCash',
+    accountName: 'Bernadette S. / Sandy M.',
+    accountNumber: '0917 123 4567',
+    note: 'Scan or send via GCash mobile app',
+    order: 1,
+  },
+  {
+    id: '2',
+    type: 'Maya',
+    bankName: 'Maya',
+    accountName: 'Sandy M.',
+    accountNumber: '0918 987 6543',
+    note: 'Maya E-Wallet Transfer',
+    order: 2,
+  },
+  {
+    id: '3',
+    type: 'Bank Transfer',
+    bankName: 'BDO Unibank',
+    accountName: 'Sandy Morales or Bernadette Santos',
+    accountNumber: '0012 3456 7890',
+    note: 'Savings Account',
+    order: 3,
+  },
+  {
+    id: '4',
+    type: 'Bank Transfer',
+    bankName: 'BPI',
+    accountName: 'Bernadette Santos',
+    accountNumber: '1234 5678 90',
+    note: 'Current/Savings Account',
+    order: 4,
+  },
+];
+
 interface GiftSuggestionProps {
   giftMessage?: string;
   options?: GiftOptionItem[];
 }
 
 export default function GiftSuggestion({ giftMessage, options = [] }: GiftSuggestionProps) {
+  const displayOptions = options.length > 0 ? options : DEFAULT_GIFTS;
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [zoomedQr, setZoomedQr] = useState<{ url: string; title: string } | null>(null);
 
@@ -147,7 +187,7 @@ export default function GiftSuggestion({ giftMessage, options = [] }: GiftSugges
       </div>
 
       {/* Gift Channels Grid */}
-      {options.length > 0 && (
+      {displayOptions.length > 0 && (
         <div
           style={{
             display: 'grid',
@@ -157,7 +197,7 @@ export default function GiftSuggestion({ giftMessage, options = [] }: GiftSugges
             margin: '0 auto',
           }}
         >
-          {options.map((opt) => {
+          {displayOptions.map((opt) => {
             const isGCash = opt.type.toLowerCase().includes('gcash') || opt.bankName?.toLowerCase().includes('gcash');
             const isMaya = opt.type.toLowerCase().includes('maya') || opt.bankName?.toLowerCase().includes('maya');
             const badgeColor = isGCash ? '#007DFE' : isMaya ? '#18C74F' : 'var(--accent-red)';
