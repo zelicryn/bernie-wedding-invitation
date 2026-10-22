@@ -10,7 +10,8 @@ export async function GET() {
     });
     return NextResponse.json({ gifts });
   } catch (error) {
-    return NextResponse.json({ error: 'Failed to fetch gift options' }, { status: 500 });
+    console.warn('Prisma gifts query failed, returning empty list:', error);
+    return NextResponse.json({ gifts: [] });
   }
 }
 

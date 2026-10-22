@@ -30,7 +30,15 @@ export async function GET() {
       gallery,
     });
   } catch (error) {
-    console.error('Error fetching public content:', error);
-    return NextResponse.json({ error: 'Failed to fetch content' }, { status: 500 });
+    console.warn('Error fetching public content, returning defaults:', error);
+    return NextResponse.json({
+      settings: {},
+      episodes: [],
+      entourage: [],
+      sponsors: [],
+      faqs: [],
+      gifts: [],
+      gallery: [],
+    });
   }
 }

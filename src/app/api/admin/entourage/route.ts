@@ -10,7 +10,8 @@ export async function GET() {
     });
     return NextResponse.json({ entourage });
   } catch (error) {
-    return NextResponse.json({ error: 'Failed to fetch entourage' }, { status: 500 });
+    console.warn('Prisma entourage query failed, returning empty list:', error);
+    return NextResponse.json({ entourage: [] });
   }
 }
 

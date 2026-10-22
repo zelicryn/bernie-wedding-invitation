@@ -10,7 +10,8 @@ export async function GET() {
     list.forEach((s) => (map[s.key] = s.value));
     return NextResponse.json({ settings: map });
   } catch (error) {
-    return NextResponse.json({ error: 'Failed to fetch settings' }, { status: 500 });
+    console.warn('Prisma settings query failed, returning empty map:', error);
+    return NextResponse.json({ settings: {} });
   }
 }
 

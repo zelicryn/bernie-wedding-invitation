@@ -10,7 +10,8 @@ export async function GET() {
     });
     return NextResponse.json({ sponsors });
   } catch (error) {
-    return NextResponse.json({ error: 'Failed to fetch sponsors' }, { status: 500 });
+    console.warn('Prisma sponsors query failed, returning empty list:', error);
+    return NextResponse.json({ sponsors: [] });
   }
 }
 

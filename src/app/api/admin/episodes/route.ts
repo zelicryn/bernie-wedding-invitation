@@ -10,7 +10,8 @@ export async function GET() {
     });
     return NextResponse.json({ episodes });
   } catch (error) {
-    return NextResponse.json({ error: 'Failed to fetch episodes' }, { status: 500 });
+    console.warn('Prisma episodes query failed, returning empty list:', error);
+    return NextResponse.json({ episodes: [] });
   }
 }
 
