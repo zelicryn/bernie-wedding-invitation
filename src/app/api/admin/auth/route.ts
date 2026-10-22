@@ -5,7 +5,8 @@ export async function POST(req: NextRequest) {
   try {
     const { pin, action, newPin } = await req.json();
 
-    if (!pin) {
+    const pinStr = String(pin ?? '').trim();
+    if (!pinStr) {
       return NextResponse.json({ error: 'PIN is required' }, { status: 400 });
     }
 
@@ -15,14 +16,14 @@ export async function POST(req: NextRequest) {
         where: { key: 'admin_pin' },
       });
       if (pinSetting?.value) {
-        currentPin = pinSetting.value;
+        currentPin = String(pinSetting.value).trim();
       }
     } catch (dbErr) {
       console.warn('Prisma DB query failed during auth check, falling back to default PIN:', dbErr);
     }
 
-    const envPin = process.env.ADMIN_PIN || '1234';
-    const isMatch = pin === currentPin || pin === envPin || pin === '1234';
+    const envPin = String(process.env.ADMIN_PIN || '1234').trim();
+    const isMatch = pinStr === currentPin || pinStr === envPin || pinStr === '1234';
 
     if (!isMatch) {
       return NextResponse.json({ error: 'Incorrect PIN' }, { status: 401 });
