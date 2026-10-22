@@ -120,7 +120,7 @@ export default function GiftSuggestion({ giftMessage, options = [] }: GiftSugges
             border: '1px solid rgba(255,255,255,0.08)',
             borderLeft: '4px solid var(--accent-red)',
             borderRadius: '12px',
-            padding: '2.5rem',
+            padding: 'clamp(1.5rem, 4vw, 2.5rem) clamp(1rem, 3.5vw, 2rem)',
             boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
           }}
         >
@@ -135,7 +135,7 @@ export default function GiftSuggestion({ giftMessage, options = [] }: GiftSugges
           </div>
           <p
             style={{
-              fontSize: '1.15rem',
+              fontSize: 'clamp(0.95rem, 2.5vw, 1.15rem)',
               lineHeight: 1.8,
               color: 'rgba(255,255,255,0.9)',
               fontStyle: 'italic',
@@ -152,8 +152,8 @@ export default function GiftSuggestion({ giftMessage, options = [] }: GiftSugges
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-            gap: '2rem',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))',
+            gap: 'clamp(1.5rem, 3vw, 2rem)',
             maxWidth: '1000px',
             margin: '0 auto',
           }}

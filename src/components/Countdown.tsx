@@ -43,23 +43,58 @@ export default function Countdown({ targetDate }: { targetDate: string }) {
   }
 
   return (
-    <div style={{ display: 'flex', gap: '2rem', justifyContent: 'center', textAlign: 'center', padding: '2rem' }}>
+    <div
+      style={{
+        display: 'flex',
+        gap: 'clamp(0.6rem, 3vw, 2.2rem)',
+        justifyContent: 'center',
+        textAlign: 'center',
+        padding: 'clamp(1.5rem, 3vw, 2.5rem) 1rem',
+        flexWrap: 'wrap',
+      }}
+    >
       {[
         { label: 'DAYS', value: timeLeft.days },
         { label: 'HOURS', value: timeLeft.hours },
         { label: 'MINUTES', value: timeLeft.minutes },
         { label: 'SECONDS', value: timeLeft.seconds },
-      ].map((item, index) => (
-        <div key={item.label} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-          <span style={{ fontSize: '3rem', fontWeight: 700, color: '#fff', textShadow: '0 0 10px rgba(255,255,255,0.3)' }}>
+      ].map((item) => (
+        <div
+          key={item.label}
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            minWidth: 'clamp(60px, 18vw, 100px)',
+            background: 'rgba(255, 255, 255, 0.03)',
+            border: '1px solid rgba(255, 255, 255, 0.08)',
+            padding: 'clamp(0.6rem, 2vw, 1.2rem) clamp(0.5rem, 1.5vw, 1rem)',
+            borderRadius: '8px',
+          }}
+        >
+          <span
+            style={{
+              fontSize: 'clamp(1.8rem, 5.5vw, 3rem)',
+              fontWeight: 800,
+              color: '#fff',
+              lineHeight: 1.1,
+              fontFamily: 'monospace',
+              textShadow: '0 0 12px rgba(229, 9, 20, 0.3)',
+            }}
+          >
             {item.value.toString().padStart(2, '0')}
           </span>
-          <span style={{ fontSize: '0.8rem', letterSpacing: '2px', color: 'var(--gray-light)' }}>
+          <span
+            style={{
+              fontSize: 'clamp(0.65rem, 1.8vw, 0.8rem)',
+              letterSpacing: '1.5px',
+              color: 'var(--gray-light)',
+              marginTop: '0.4rem',
+              fontWeight: 600,
+            }}
+          >
             {item.label}
           </span>
-          {index < 3 && (
-            <span style={{ position: 'absolute', transform: 'translateX(40px) translateY(15px)', color: 'var(--accent-red)' }}>•</span>
-          )}
         </div>
       ))}
     </div>

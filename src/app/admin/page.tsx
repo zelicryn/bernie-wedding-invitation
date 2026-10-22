@@ -544,10 +544,12 @@ export default function AdminPage() {
           position: 'sticky',
           top: 0,
           zIndex: 40,
-          padding: '1rem 2rem',
+          padding: '0.8rem clamp(1rem, 3vw, 2rem)',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
+          flexWrap: 'wrap',
+          gap: '0.8rem',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
@@ -653,7 +655,7 @@ export default function AdminPage() {
             <div
               style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 140px), 1fr))',
                 gap: '1rem',
                 marginBottom: '2rem',
               }}

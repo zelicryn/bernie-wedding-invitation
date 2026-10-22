@@ -49,8 +49,8 @@ export default function Entourage({ members = [] }: { members?: CastMember[] }) 
       <div
         style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(210px, 1fr))',
-          gap: '2rem',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 150px), 1fr))',
+          gap: 'clamp(1rem, 2.5vw, 2rem)',
         }}
       >
         {displayMembers.map((member) => (

@@ -73,8 +73,8 @@ export default function PrincipalSponsors({ sponsors = [] }: PrincipalSponsorsPr
         <div
           style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
-            gap: '2.5rem',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))',
+            gap: 'clamp(1.5rem, 3vw, 2.5rem)',
             maxWidth: '1000px',
             margin: '0 auto',
           }}
@@ -87,7 +87,7 @@ export default function PrincipalSponsors({ sponsors = [] }: PrincipalSponsorsPr
               border: '1px solid rgba(255,255,255,0.08)',
               borderTop: '3px solid var(--accent-red)',
               borderRadius: '12px',
-              padding: '2.5rem 2rem',
+              padding: 'clamp(1.6rem, 3.5vw, 2.5rem) clamp(1rem, 2.5vw, 2rem)',
               boxShadow: '0 8px 30px rgba(0,0,0,0.5)',
             }}
           >
@@ -183,7 +183,7 @@ export default function PrincipalSponsors({ sponsors = [] }: PrincipalSponsorsPr
               border: '1px solid rgba(255,255,255,0.08)',
               borderTop: '3px solid var(--accent-red)',
               borderRadius: '12px',
-              padding: '2.5rem 2rem',
+              padding: 'clamp(1.6rem, 3.5vw, 2.5rem) clamp(1rem, 2.5vw, 2rem)',
               boxShadow: '0 8px 30px rgba(0,0,0,0.5)',
             }}
           >

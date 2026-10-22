@@ -120,7 +120,7 @@ export default function FaqSection({ faqs = [] }: FaqSectionProps) {
                   textAlign: 'left',
                   background: 'none',
                   border: 'none',
-                  padding: '1.4rem 1.8rem',
+                  padding: 'clamp(1rem, 2.5vw, 1.4rem) clamp(1rem, 3vw, 1.8rem)',
                   display: 'flex',
                   justifyContent: 'space-between',
                   alignItems: 'center',
@@ -129,18 +129,18 @@ export default function FaqSection({ faqs = [] }: FaqSectionProps) {
                   fontFamily: 'var(--font-sans)',
                 }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem' }}>
                   <span
                     style={{
                       color: isOpen ? 'var(--accent-red)' : 'var(--gray-light)',
                       fontWeight: 700,
-                      fontSize: '1rem',
+                      fontSize: '0.95rem',
                       minWidth: '24px',
                     }}
                   >
                     {String(index + 1).padStart(2, '0')}.
                   </span>
-                  <span style={{ fontSize: '1.15rem', fontWeight: 600, letterSpacing: '0.3px' }}>
+                  <span style={{ fontSize: 'clamp(0.95rem, 2.5vw, 1.15rem)', fontWeight: 600, letterSpacing: '0.3px', lineHeight: 1.4 }}>
                     {faq.question}
                   </span>
                 </div>
@@ -149,9 +149,9 @@ export default function FaqSection({ faqs = [] }: FaqSectionProps) {
                     color: isOpen ? 'var(--accent-red)' : 'var(--gray-light)',
                     transform: isOpen ? 'rotate(45deg)' : 'rotate(0deg)',
                     transition: 'transform 0.3s ease, color 0.3s ease',
-                    fontSize: '1.8rem',
+                    fontSize: '1.6rem',
                     lineHeight: '1',
-                    marginLeft: '1rem',
+                    marginLeft: '0.8rem',
                     flexShrink: 0,
                   }}
                 >
@@ -162,12 +162,11 @@ export default function FaqSection({ faqs = [] }: FaqSectionProps) {
               {isOpen && (
                 <div
                   style={{
-                    padding: '0 1.8rem 1.6rem 3.4rem',
+                    padding: '1rem clamp(1rem, 3vw, 1.8rem) 1.5rem clamp(1.2rem, 3vw, 2.5rem)',
                     color: 'rgba(255,255,255,0.85)',
-                    fontSize: '1.05rem',
+                    fontSize: 'clamp(0.9rem, 2.2vw, 1.05rem)',
                     lineHeight: 1.7,
                     borderTop: '1px solid rgba(255,255,255,0.05)',
-                    paddingTop: '1rem',
                     animation: 'fadeIn 0.3s ease-in-out',
                   }}
                 >

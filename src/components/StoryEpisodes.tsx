@@ -86,8 +86,8 @@ export default function StoryEpisodes({ episodes = [] }: { episodes?: Episode[] 
           >
             <div
               style={{
-                flex: '1 1 320px',
-                minHeight: '220px',
+                flex: '1 1 280px',
+                minHeight: 'clamp(200px, 35vw, 280px)',
                 backgroundColor: '#222',
                 position: 'relative',
               }}
@@ -97,7 +97,7 @@ export default function StoryEpisodes({ episodes = [] }: { episodes?: Episode[] 
                   src={ep.photoUrl}
                   alt={ep.title}
                   fill
-                  sizes="(max-width: 768px) 100vw, 400px"
+                  sizes="(max-width: 768px) 100vw, 500px"
                   style={{ objectFit: 'cover' }}
                 />
               ) : (
@@ -147,17 +147,17 @@ export default function StoryEpisodes({ episodes = [] }: { episodes?: Episode[] 
 
             <div
               style={{
-                flex: '2 1 350px',
-                padding: '2rem',
+                flex: '2 1 280px',
+                padding: 'clamp(1.4rem, 3.5vw, 2.2rem)',
                 display: 'flex',
                 flexDirection: 'column',
                 justifyContent: 'center',
               }}
             >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.8rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', marginBottom: '0.8rem', flexWrap: 'wrap' }}>
                 <span
                   style={{
-                    fontSize: '1.6rem',
+                    fontSize: '1.5rem',
                     fontWeight: 800,
                     color: 'var(--accent-red)',
                     fontFamily: 'monospace',
@@ -165,9 +165,9 @@ export default function StoryEpisodes({ episodes = [] }: { episodes?: Episode[] 
                 >
                   {String(index + 1).padStart(2, '0')}
                 </span>
-                <h3 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#fff' }}>{ep.title}</h3>
+                <h3 style={{ fontSize: 'clamp(1.2rem, 3vw, 1.5rem)', fontWeight: 700, color: '#fff' }}>{ep.title}</h3>
               </div>
-              <p style={{ color: 'var(--gray-light)', lineHeight: 1.7, fontSize: '1rem' }}>
+              <p style={{ color: 'var(--gray-light)', lineHeight: 1.7, fontSize: '0.95rem' }}>
                 {ep.description}
               </p>
             </div>

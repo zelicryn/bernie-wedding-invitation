@@ -46,13 +46,13 @@ export default function WeddingDetails({
         <h2 className="section-title">The Wedding Details</h2>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '2.5rem' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 280px), 1fr))', gap: 'clamp(1.5rem, 3vw, 2.5rem)' }}>
         {/* Ceremony */}
         <div
           className="fade-in"
           style={{
             backgroundColor: 'var(--gray-dark)',
-            padding: '3rem 2.5rem',
+            padding: 'clamp(2rem, 4vw, 3rem) clamp(1.2rem, 3vw, 2.2rem)',
             borderRadius: '12px',
             textAlign: 'center',
             border: '1px solid var(--gray-medium)',
@@ -104,7 +104,7 @@ export default function WeddingDetails({
           className="fade-in"
           style={{
             backgroundColor: 'var(--gray-dark)',
-            padding: '3rem 2.5rem',
+            padding: 'clamp(2rem, 4vw, 3rem) clamp(1.2rem, 3vw, 2.2rem)',
             borderRadius: '12px',
             textAlign: 'center',
             border: '1px solid var(--gray-medium)',
@@ -156,7 +156,7 @@ export default function WeddingDetails({
           className="fade-in"
           style={{
             backgroundColor: 'var(--gray-dark)',
-            padding: '3rem 2.5rem',
+            padding: 'clamp(2rem, 4vw, 3rem) clamp(1.2rem, 3vw, 2.2rem)',
             borderRadius: '12px',
             textAlign: 'center',
             border: '1px solid var(--gray-medium)',

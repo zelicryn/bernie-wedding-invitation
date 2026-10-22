@@ -163,7 +163,7 @@ export default function RsvpSystem({ rsvpDeadline }: { rsvpDeadline?: string }) 
           className="fade-in"
           style={{
             background: 'var(--gray-dark)',
-            padding: '2.5rem',
+            padding: 'clamp(1.5rem, 4vw, 2.5rem) clamp(1rem, 3.5vw, 2rem)',
             borderRadius: '12px',
             border: '1px solid var(--gray-medium)',
             boxShadow: '0 10px 40px rgba(0,0,0,0.6)',
@@ -298,7 +298,7 @@ export default function RsvpSystem({ rsvpDeadline }: { rsvpDeadline?: string }) 
           className="fade-in"
           style={{
             background: 'var(--gray-dark)',
-            padding: '2.5rem',
+            padding: 'clamp(1.5rem, 4vw, 2.5rem) clamp(1rem, 3.5vw, 2rem)',
             borderRadius: '12px',
             border: '1px solid var(--gray-medium)',
             boxShadow: '0 15px 50px rgba(0,0,0,0.7)',
@@ -322,7 +322,7 @@ export default function RsvpSystem({ rsvpDeadline }: { rsvpDeadline?: string }) 
               >
                 Personal Invitation
               </span>
-              <h3 style={{ fontSize: '2rem', fontWeight: 800, color: '#fff', textTransform: 'capitalize' }}>
+              <h3 style={{ fontSize: 'clamp(1.4rem, 4.5vw, 2rem)', fontWeight: 800, color: '#fff', textTransform: 'capitalize' }}>
                 Welcome, {selectedGuest.name}!
               </h3>
             </div>

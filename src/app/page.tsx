@@ -3,6 +3,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import prisma from '@/lib/prisma';
 
+import Navigation from '@/components/Navigation';
 import Countdown from '@/components/Countdown';
 import StoryEpisodes from '@/components/StoryEpisodes';
 import WeddingDetails from '@/components/WeddingDetails';
@@ -55,101 +56,8 @@ export default async function Home() {
 
   return (
     <main>
-      {/* Navigation */}
-      <nav
-        className="nav-glass"
-        style={{
-          position: 'fixed',
-          top: 0,
-          width: '100%',
-          zIndex: 50,
-          padding: '0.8rem 2rem',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          backdropFilter: 'blur(10px)',
-          background: 'rgba(20, 20, 20, 0.85)',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
-        }}
-      >
-        <Link href="#home" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <div
-            style={{
-              position: 'relative',
-              width: '40px',
-              height: '40px',
-              borderRadius: '50%',
-              overflow: 'hidden',
-              border: '1.5px solid rgba(255,255,255,0.4)',
-              background: '#fff',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <Image src="/logo.png" alt="S & B Monogram Logo" fill style={{ objectFit: 'contain', padding: '2px' }} />
-          </div>
-          <span style={{ color: 'var(--accent-red)', fontWeight: 800, fontSize: '1.3rem', letterSpacing: '2px', textTransform: 'uppercase' }}>
-            S & B
-          </span>
-        </Link>
-
-        <ul
-          style={{
-            display: 'flex',
-            gap: '1.6rem',
-            listStyle: 'none',
-            fontWeight: 500,
-            fontSize: '0.85rem',
-            alignItems: 'center',
-            flexWrap: 'wrap',
-          }}
-        >
-          <li><Link href="#home" style={{ transition: 'color 0.2s' }}>Home</Link></li>
-          <li><Link href="#story" style={{ transition: 'color 0.2s' }}>Our Story</Link></li>
-          <li><Link href="#details" style={{ transition: 'color 0.2s' }}>Details</Link></li>
-          <li><Link href="#sponsors" style={{ transition: 'color 0.2s' }}>Sponsors</Link></li>
-          <li><Link href="#cast" style={{ transition: 'color 0.2s' }}>The Cast</Link></li>
-          <li><Link href="#gift-guide" style={{ transition: 'color 0.2s' }}>Gift Guide</Link></li>
-          <li><Link href="#faqs" style={{ transition: 'color 0.2s' }}>FAQs</Link></li>
-          <li>
-            <Link
-              href="#rsvp"
-              style={{
-                background: 'var(--accent-red)',
-                color: '#fff',
-                padding: '0.4rem 1rem',
-                borderRadius: '4px',
-                fontWeight: 700,
-                fontSize: '0.8rem',
-                letterSpacing: '1px',
-              }}
-            >
-              RSVP
-            </Link>
-          </li>
-          <li>
-            <Link
-              href="/admin"
-              title="Bride & Groom Portal"
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '4px',
-                background: 'rgba(255,255,255,0.1)',
-                color: 'rgba(255,255,255,0.85)',
-                padding: '0.35rem 0.8rem',
-                borderRadius: '4px',
-                fontSize: '0.75rem',
-                fontWeight: 600,
-                border: '1px solid rgba(255,255,255,0.15)',
-              }}
-            >
-              Couple Portal
-            </Link>
-          </li>
-        </ul>
-      </nav>
+      {/* Responsive Navigation */}
+      <Navigation />
 
       {/* Hero Section */}
       <section
@@ -159,7 +67,7 @@ export default async function Home() {
           minHeight: '100vh',
           display: 'flex',
           alignItems: 'center',
-          padding: '6rem 2rem 4rem 4rem',
+          padding: 'clamp(5.5rem, 12vh, 8rem) clamp(1rem, 4vw, 4rem) 3.5rem clamp(1rem, 4vw, 4rem)',
           overflow: 'hidden',
         }}
       >
