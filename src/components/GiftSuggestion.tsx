@@ -14,52 +14,13 @@ export interface GiftOptionItem {
   order?: number;
 }
 
-const DEFAULT_GIFTS: GiftOptionItem[] = [
-  {
-    id: '1',
-    type: 'GCash',
-    bankName: 'GCash',
-    accountName: 'Bernadette S. / Sandy M.',
-    accountNumber: '0917 123 4567',
-    note: 'Scan or send via GCash mobile app',
-    order: 1,
-  },
-  {
-    id: '2',
-    type: 'Maya',
-    bankName: 'Maya',
-    accountName: 'Sandy M.',
-    accountNumber: '0918 987 6543',
-    note: 'Maya E-Wallet Transfer',
-    order: 2,
-  },
-  {
-    id: '3',
-    type: 'Bank Transfer',
-    bankName: 'BDO Unibank',
-    accountName: 'Sandy Morales or Bernadette Santos',
-    accountNumber: '0012 3456 7890',
-    note: 'Savings Account',
-    order: 3,
-  },
-  {
-    id: '4',
-    type: 'Bank Transfer',
-    bankName: 'BPI',
-    accountName: 'Bernadette Santos',
-    accountNumber: '1234 5678 90',
-    note: 'Current/Savings Account',
-    order: 4,
-  },
-];
-
 interface GiftSuggestionProps {
   giftMessage?: string;
   options?: GiftOptionItem[];
 }
 
 export default function GiftSuggestion({ giftMessage, options = [] }: GiftSuggestionProps) {
-  const displayOptions = options.length > 0 ? options : DEFAULT_GIFTS;
+  const displayOptions = options;
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [zoomedQr, setZoomedQr] = useState<{ url: string; title: string } | null>(null);
 
