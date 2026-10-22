@@ -1,0 +1,79 @@
+import { NextRequest, NextResponse } from 'next/server';
+import prisma from '@/lib/prisma';
+
+export const dynamic = 'force-dynamic';
+
+export async function GET() {
+  try {
+    const sponsors = await prisma.principalSponsor.findMany({
+      orderBy: { order: 'asc' },
+    });
+    return NextResponse.json({ sponsors });
+  } catch (error) {
+    return NextResponse.json({ error: 'Failed to fetch sponsors' }, { status: 500 });
+  }
+}
+
+export async function POST(req: NextRequest) {
+  try {
+    const body = await req.json();
+    const { name, gender, partnerName, role, photoUrl, order } = body;
+
+    if (!name || !name.trim()) {
+      return NextResponse.json({ error: 'Sponsor name is required' }, { status: 400 });
+    }
+
+    const sponsor = await prisma.principalSponsor.create({
+      data: {
+        name: name.trim(),
+        gender: gender || 'MALE',
+        partnerName: partnerName ? partnerName.trim() : null,
+        role: role ? role.trim() : 'Principal Sponsor',
+        photoUrl: photoUrl || null,
+        order: Number(order) || 0,
+      },
+    });
+
+    return NextResponse.json({ success: true, sponsor });
+  } catch (error) {
+    return NextResponse.json({ error: 'Failed to create sponsor' }, { status: 500 });
+  }
+}
+
+export async function PUT(req: NextRequest) {
+  try {
+    const body = await req.json();
+    const { id, name, gender, partnerName, role, photoUrl, order } = body;
+
+    if (!id) return NextResponse.json({ error: 'ID is required' }, { status: 400 });
+
+    const updated = await prisma.principalSponsor.update({
+      where: { id },
+      data: {
+        name: name ? name.trim() : undefined,
+        gender: gender || undefined,
+        partnerName: partnerName !== undefined ? (partnerName ? partnerName.trim() : null) : undefined,
+        role: role !== undefined ? role.trim() : undefined,
+        photoUrl: photoUrl !== undefined ? photoUrl : undefined,
+        order: order !== undefined ? Number(order) : undefined,
+      },
+    });
+
+    return NextResponse.json({ success: true, sponsor: updated });
+  } catch (error) {
+    return NextResponse.json({ error: 'Failed to update sponsor' }, { status: 500 });
+  }
+}
+
+export async function DELETE(req: NextRequest) {
+  try {
+    const { searchParams } = new URL(req.url);
+    const id = searchParams.get('id');
+    if (!id) return NextResponse.json({ error: 'ID is required' }, { status: 400 });
+
+    await prisma.principalSponsor.delete({ where: { id } });
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    return NextResponse.json({ error: 'Failed to delete sponsor' }, { status: 500 });
+  }
+}

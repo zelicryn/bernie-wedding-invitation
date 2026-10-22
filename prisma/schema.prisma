@@ -1,0 +1,95 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Guest {
+  id                String   @id @default(cuid())
+  name              String
+  email             String?
+  phone             String?
+  seats             Int      @default(1)
+  status            String   @default("PENDING") // PENDING, CONFIRMED, DECLINED
+  attendingCount    Int      @default(0)
+  accompanyingNames String?
+  notes             String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+model Admin {
+  id       String @id @default(cuid())
+  username String @unique
+  password String
+}
+
+model Setting {
+  id    String @id @default(cuid())
+  key   String @unique
+  value String
+}
+
+model Episode {
+  id          String   @id @default(cuid())
+  title       String
+  date        String?
+  description String?
+  photoUrl    String?
+  videoUrl    String?
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Entourage {
+  id          String   @id @default(cuid())
+  name        String
+  role        String
+  category    String   @default("Entourage") // "Primary", "Bridal Party", "Groomsmen", "Secondary"
+  description String?
+  photoUrl    String?
+  order       Int      @default(0)
+}
+
+model PrincipalSponsor {
+  id          String   @id @default(cuid())
+  name        String
+  gender      String   @default("MALE") // "MALE" (Ninong), "FEMALE" (Ninang), "COUPLE"
+  partnerName String?
+  role        String   @default("Principal Sponsor")
+  photoUrl    String?
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+}
+
+model Faq {
+  id        String   @id @default(cuid())
+  question  String
+  answer    String
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+}
+
+model GiftOption {
+  id            String   @id @default(cuid())
+  type          String   // "GCash", "Maya", "Bank", "Wishing Well", "Other"
+  accountName   String?
+  accountNumber String?
+  bankName      String?
+  qrCodeUrl     String?
+  note          String?
+  order         Int      @default(0)
+  createdAt     DateTime @default(now())
+}
+
+model Gallery {
+  id        String   @id @default(cuid())
+  photoUrl  String
+  caption   String?
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+}
