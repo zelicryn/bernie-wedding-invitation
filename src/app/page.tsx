@@ -13,17 +13,20 @@ import GiftSuggestion from '@/components/GiftSuggestion';
 import FaqSection from '@/components/FaqSection';
 import RsvpSystem from '@/components/RsvpSystem';
 
+import { getPersistentSettings } from '@/lib/blobStorage';
+
 export const dynamic = 'force-dynamic';
 
 async function getInvitationData() {
   try {
-    const [settingsList, episodes, entourage, sponsors, faqs, gifts] = await Promise.all([
-      prisma.setting.findMany(),
-      prisma.episode.findMany({ orderBy: { order: 'asc' } }),
-      prisma.entourage.findMany({ orderBy: { order: 'asc' } }),
-      prisma.principalSponsor.findMany({ orderBy: { order: 'asc' } }),
-      prisma.faq.findMany({ orderBy: { order: 'asc' } }),
-      prisma.giftOption.findMany({ orderBy: { order: 'asc' } }),
+    const [settingsList, episodes, entourage, sponsors, faqs, gifts, blobSettings] = await Promise.all([
+      prisma.setting.findMany().catch(() => []),
+      prisma.episode.findMany({ orderBy: { order: 'asc' } }).catch(() => []),
+      prisma.entourage.findMany({ orderBy: { order: 'asc' } }).catch(() => []),
+      prisma.principalSponsor.findMany({ orderBy: { order: 'asc' } }).catch(() => []),
+      prisma.faq.findMany({ orderBy: { order: 'asc' } }).catch(() => []),
+      prisma.giftOption.findMany({ orderBy: { order: 'asc' } }).catch(() => []),
+      getPersistentSettings().catch(() => ({})),
     ]);
 
     const settings: Record<string, string> = {};
@@ -31,7 +34,9 @@ async function getInvitationData() {
       settings[s.key] = s.value;
     });
 
-    return { settings, episodes, entourage, sponsors, faqs, gifts };
+    const mergedSettings = { ...settings, ...blobSettings };
+
+    return { settings: mergedSettings, episodes, entourage, sponsors, faqs, gifts };
   } catch (err) {
     console.error('Error loading invitation data:', err);
     return {

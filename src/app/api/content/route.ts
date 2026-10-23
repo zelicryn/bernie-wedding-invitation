@@ -1,18 +1,20 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
+import { getPersistentSettings } from '@/lib/blobStorage';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
-    const [settingsList, episodes, entourage, sponsors, faqs, gifts, gallery] = await Promise.all([
-      prisma.setting.findMany(),
-      prisma.episode.findMany({ orderBy: { order: 'asc' } }),
-      prisma.entourage.findMany({ orderBy: { order: 'asc' } }),
-      prisma.principalSponsor.findMany({ orderBy: { order: 'asc' } }),
-      prisma.faq.findMany({ orderBy: { order: 'asc' } }),
-      prisma.giftOption.findMany({ orderBy: { order: 'asc' } }),
-      prisma.gallery.findMany({ orderBy: { order: 'asc' } }),
+    const [settingsList, episodes, entourage, sponsors, faqs, gifts, gallery, blobSettings] = await Promise.all([
+      prisma.setting.findMany().catch(() => []),
+      prisma.episode.findMany({ orderBy: { order: 'asc' } }).catch(() => []),
+      prisma.entourage.findMany({ orderBy: { order: 'asc' } }).catch(() => []),
+      prisma.principalSponsor.findMany({ orderBy: { order: 'asc' } }).catch(() => []),
+      prisma.faq.findMany({ orderBy: { order: 'asc' } }).catch(() => []),
+      prisma.giftOption.findMany({ orderBy: { order: 'asc' } }).catch(() => []),
+      prisma.gallery.findMany({ orderBy: { order: 'asc' } }).catch(() => []),
+      getPersistentSettings().catch(() => ({})),
     ]);
 
     const settings: Record<string, string> = {};
@@ -20,8 +22,10 @@ export async function GET() {
       settings[s.key] = s.value;
     });
 
+    const mergedSettings = { ...settings, ...blobSettings };
+
     return NextResponse.json({
-      settings,
+      settings: mergedSettings,
       episodes,
       entourage,
       sponsors,

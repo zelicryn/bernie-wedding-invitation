@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { put } from '@vercel/blob';
 import fs from 'fs';
 import path from 'path';
 
@@ -15,44 +16,43 @@ export async function POST(req: NextRequest) {
 
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
+    const safeName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
+    const filename = `uploads/${Date.now()}_${safeName}`;
 
-    // On Vercel / AWS Lambda, the filesystem is read-only.
-    // Return a base64 Data URL directly so no disk writes are attempted.
-    const isServerless = Boolean(
-      process.env.VERCEL ||
-      process.env.AWS_LAMBDA_FUNCTION_NAME ||
-      process.env.LAMBDA_TASK_ROOT
-    );
-
-    if (isServerless) {
-      const mime = file.type || 'image/jpeg';
-      const base64 = buffer.toString('base64');
-      const url = `data:${mime};base64,${base64}`;
-      return NextResponse.json({ success: true, url, filename: file.name });
+    // 1. Try uploading to Vercel Blob CDN (permanent cloud storage)
+    try {
+      const blob = await put(filename, buffer, {
+        access: 'public',
+        contentType: file.type || 'image/jpeg',
+      });
+      if (blob?.url) {
+        return NextResponse.json({ success: true, url: blob.url, filename: safeName });
+      }
+    } catch (blobErr) {
+      console.warn('Vercel Blob upload failed, attempting local disk or data URL fallback:', blobErr);
     }
 
+    // 2. Local environment: attempt writing to public/uploads
     try {
       const uploadsDir = path.join(process.cwd(), 'public', 'uploads');
       if (!fs.existsSync(uploadsDir)) {
         fs.mkdirSync(uploadsDir, { recursive: true });
       }
 
-      // Clean filename
-      const safeName = file.name.replace(/[^a-zA-Z0-9.-]/g, '_');
-      const filename = `${Date.now()}_${safeName}`;
-      const filePath = path.join(uploadsDir, filename);
-
+      const filePath = path.join(uploadsDir, `${Date.now()}_${safeName}`);
       fs.writeFileSync(filePath, buffer);
 
-      const url = `/uploads/${filename}`;
-      return NextResponse.json({ success: true, url, filename });
+      const url = `/uploads/${Date.now()}_${safeName}`;
+      return NextResponse.json({ success: true, url, filename: safeName });
     } catch (fsError) {
-      console.warn('Local disk write failed, falling back to base64 data URL:', fsError);
-      const mime = file.type || 'image/jpeg';
-      const base64 = buffer.toString('base64');
-      const url = `data:${mime};base64,${base64}`;
-      return NextResponse.json({ success: true, url, filename: file.name });
+      console.warn('Local disk write failed, falling back to data URL:', fsError);
     }
+
+    // 3. Fallback: Base64 Data URL
+    const mime = file.type || 'image/jpeg';
+    const base64 = buffer.toString('base64');
+    const url = `data:${mime};base64,${base64}`;
+    return NextResponse.json({ success: true, url, filename: file.name });
   } catch (error) {
     console.error('Upload error:', error);
     return NextResponse.json({ error: 'Failed to upload image' }, { status: 500 });
