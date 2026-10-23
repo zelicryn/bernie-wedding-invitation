@@ -240,17 +240,92 @@ export default function AdminPage() {
     }
   };
 
+  // --- CLIENT-SIDE IMAGE OPTIMIZER ---
+  const compressImageFile = async (file: File, maxWidth = 1600, quality = 0.82): Promise<string> => {
+    return new Promise((resolve) => {
+      if (file.type === 'image/svg+xml' || file.type === 'image/gif') {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = () => resolve('');
+        reader.readAsDataURL(file);
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = document.createElement('img');
+        img.onload = () => {
+          let { width, height } = img;
+          if (width > maxWidth || height > maxWidth) {
+            if (width > height) {
+              height = Math.round((height * maxWidth) / width);
+              width = maxWidth;
+            } else {
+              width = Math.round((width * maxWidth) / height);
+              height = maxWidth;
+            }
+          }
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          if (!ctx) {
+            resolve((e.target?.result as string) || '');
+            return;
+          }
+          ctx.drawImage(img, 0, 0, width, height);
+
+          try {
+            const webp = canvas.toDataURL('image/webp', quality);
+            if (webp && webp.startsWith('data:image/webp')) {
+              resolve(webp);
+              return;
+            }
+          } catch (_) {}
+
+          const jpeg = canvas.toDataURL('image/jpeg', quality);
+          resolve(jpeg || (e.target?.result as string) || '');
+        };
+        img.onerror = () => resolve((e.target?.result as string) || '');
+        img.src = (e.target?.result as string) || '';
+      };
+      reader.onerror = () => resolve('');
+      reader.readAsDataURL(file);
+    });
+  };
+
   // --- IMAGE UPLOAD HELPER ---
   const handleFileUpload = async (file: File, onDone: (url: string) => void) => {
-    const formData = new FormData();
-    formData.append('file', file);
     try {
-      const res = await fetch('/api/upload', { method: 'POST', body: formData });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Upload failed');
-      onDone(data.url);
-      showToast('Image uploaded successfully!');
+      showToast('Optimizing image...');
+      
+      // 1. Client-side compression to keep payload fast and lightweight (< 200KB)
+      const compressedDataUrl = await compressImageFile(file);
+
+      // 2. Try server upload route first
+      try {
+        const formData = new FormData();
+        formData.append('file', file);
+        const res = await fetch('/api/upload', { method: 'POST', body: formData });
+        const data = await res.json();
+        if (res.ok && data.url) {
+          onDone(data.url);
+          showToast('Image uploaded successfully!');
+          return;
+        }
+      } catch (serverErr) {
+        console.warn('Server upload route failed, using optimized base64 image:', serverErr);
+      }
+
+      // 3. Fallback: if server cannot write to disk (e.g. Vercel read-only filesystem), use optimized Data URL
+      if (compressedDataUrl) {
+        onDone(compressedDataUrl);
+        showToast('Image uploaded & saved!');
+      } else {
+        throw new Error('Could not process image file');
+      }
     } catch (err: any) {
+      console.error('Image upload error:', err);
       alert(err.message || 'Image upload error');
     }
   };
@@ -1107,18 +1182,25 @@ export default function AdminPage() {
                     <input
                       type="file"
                       accept="image/*"
-                      onChange={(e) => {
+                      disabled={uploadingField === 'hero_bg_image'}
+                      onChange={async (e) => {
                         const file = e.target.files?.[0];
                         if (file) {
                           setUploadingField('hero_bg_image');
-                          handleFileUpload(file, (url) => {
-                            handleSaveSettings({ hero_bg_image: url });
+                          try {
+                            await handleFileUpload(file, (url) => {
+                              handleSaveSettings({ hero_bg_image: url });
+                            });
+                          } finally {
                             setUploadingField(null);
-                          });
+                          }
                         }
                       }}
                       style={{ fontSize: '0.85rem' }}
                     />
+                    {uploadingField === 'hero_bg_image' && (
+                      <span style={{ fontSize: '0.8rem', color: '#ffb703' }}>⏳ Optimizing and saving banner photo...</span>
+                    )}
 
                     <label style={{ fontSize: '0.8rem', fontWeight: 600, marginTop: '0.5rem' }}>Option B: Paste Image URL</label>
                     <input
@@ -1177,18 +1259,25 @@ export default function AdminPage() {
                     <input
                       type="file"
                       accept="image/*"
-                      onChange={(e) => {
+                      disabled={uploadingField === 'couple_photo'}
+                      onChange={async (e) => {
                         const file = e.target.files?.[0];
                         if (file) {
                           setUploadingField('couple_photo');
-                          handleFileUpload(file, (url) => {
-                            handleSaveSettings({ couple_photo: url });
+                          try {
+                            await handleFileUpload(file, (url) => {
+                              handleSaveSettings({ couple_photo: url });
+                            });
+                          } finally {
                             setUploadingField(null);
-                          });
+                          }
                         }
                       }}
                       style={{ fontSize: '0.85rem' }}
                     />
+                    {uploadingField === 'couple_photo' && (
+                      <span style={{ fontSize: '0.8rem', color: '#ffb703' }}>⏳ Optimizing and saving couple portrait...</span>
+                    )}
 
                     <label style={{ fontSize: '0.8rem', fontWeight: 600, marginTop: '0.5rem' }}>Option B: Paste Image URL</label>
                     <input
