@@ -388,11 +388,8 @@ export default function Navigation() {
       {/* Global CSS for switching desktop / mobile navigation */}
       <style jsx>{`
         @media (max-width: 940px) {
-          .desktop-nav-menu {
+          .nav-glass {
             display: none !important;
-          }
-          .mobile-nav-controls {
-            display: flex !important;
           }
         }
       `}</style>

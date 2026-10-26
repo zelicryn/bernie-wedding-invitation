@@ -1,9 +1,9 @@
 import React from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import prisma from '@/lib/prisma';
 
 import Navigation from '@/components/Navigation';
+import HeroSection from '@/components/HeroSection';
 import Countdown from '@/components/Countdown';
 import StoryEpisodes from '@/components/StoryEpisodes';
 import WeddingDetails from '@/components/WeddingDetails';
@@ -64,109 +64,16 @@ export default async function Home() {
       {/* Responsive Navigation */}
       <Navigation />
 
-      {/* Hero Section */}
-      <section
-        id="home"
-        style={{
-          position: 'relative',
-          minHeight: '100vh',
-          display: 'flex',
-          alignItems: 'center',
-          padding: 'clamp(5.5rem, 12vh, 8rem) clamp(1rem, 4vw, 4rem) 3.5rem clamp(1rem, 4vw, 4rem)',
-          overflow: 'hidden',
-        }}
-      >
-        {/* Background Image with Dark Vignette Gradient */}
-        <div style={{ position: 'absolute', inset: 0, zIndex: 0 }}>
-          {heroBg && (
-            <Image
-              src={heroBg}
-              alt="Sandy & Bernadette"
-              fill
-              priority
-              style={{ objectFit: 'cover' }}
-            />
-          )}
-          <div
-            style={{
-              position: 'absolute',
-              inset: 0,
-              background: 'linear-gradient(to right, rgba(14,14,14,0.95) 0%, rgba(14,14,14,0.7) 45%, rgba(14,14,14,0.4) 100%), linear-gradient(to top, rgba(14,14,14,1) 0%, rgba(14,14,14,0) 40%)',
-            }}
-          />
-        </div>
-
-        <div className="fade-in" style={{ position: 'relative', zIndex: 10, maxWidth: '680px', paddingTop: '2rem' }}>
-          <div
-            style={{
-              display: 'inline-flex',
-              alignItems: 'center',
-              gap: '8px',
-              background: 'rgba(229, 9, 20, 0.25)',
-              border: '1px solid var(--accent-red)',
-              padding: '4px 14px',
-              borderRadius: '20px',
-              marginBottom: '1.2rem',
-            }}
-          >
-            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--accent-red)' }} />
-            <span style={{ fontSize: '0.75rem', fontWeight: 700, letterSpacing: '2px', color: '#fff', textTransform: 'uppercase' }}>
-              NETFLIX ORIGINAL LOVE STORY
-            </span>
-          </div>
-
-          <h2 style={{ fontSize: '1.3rem', color: 'rgba(255,255,255,0.9)', letterSpacing: '4px', textTransform: 'uppercase', marginBottom: '0.5rem' }}>
-            A Love Story
-          </h2>
-
-          <h1
-            className="text-gradient"
-            style={{
-              fontSize: 'clamp(3rem, 7vw, 5.2rem)',
-              fontWeight: 800,
-              lineHeight: 1.05,
-              marginBottom: '1.2rem',
-              textTransform: 'uppercase',
-              letterSpacing: '1px',
-            }}
-          >
-            {groomName} <br />& {brideName}
-          </h1>
-
-          <p style={{ fontSize: '1.25rem', color: 'var(--gray-light)', marginBottom: '2.2rem', fontStyle: 'italic', lineHeight: 1.5 }}>
-            "{subtitle}"
-          </p>
-
-          <div style={{ display: 'flex', gap: '1rem', marginBottom: '3rem', flexWrap: 'wrap' }}>
-            <Link href="#rsvp" className="btn-primary" style={{ padding: '0.9rem 2.2rem', fontSize: '1.05rem' }}>
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
-                <polygon points="5 3 19 12 5 21 5 3"></polygon>
-              </svg>
-              WATCH INVITATION & RSVP
-            </Link>
-            <Link href="#details" className="btn-secondary" style={{ padding: '0.9rem 1.8rem', fontSize: '1.05rem' }}>
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="12" cy="12" r="10"></circle>
-                <line x1="12" y1="16" x2="12" y2="12"></line>
-                <line x1="12" y1="8" x2="12.01" y2="8"></line>
-              </svg>
-              VIEW DETAILS
-            </Link>
-          </div>
-
-          <div style={{ borderLeft: '3px solid var(--accent-red)', paddingLeft: '1.2rem' }}>
-            <p style={{ fontSize: '0.85rem', color: 'var(--gray-light)', textTransform: 'uppercase', letterSpacing: '2px', marginBottom: '0.3rem' }}>
-              PREMIERING ON
-            </p>
-            <p style={{ fontSize: '1.6rem', fontWeight: 700, color: '#fff' }}>
-              December 7, 2026
-            </p>
-            <p style={{ fontSize: '0.9rem', color: 'var(--gray-light)' }}>
-              Manila Cathedral • The Manila Hotel
-            </p>
-          </div>
-        </div>
-      </section>
+      {/* Hero Section (Netflix Mobile App Style) */}
+      <HeroSection
+        brideName={brideName}
+        groomName={groomName}
+        weddingDate={weddingDate}
+        heroBg={heroBg}
+        subtitle={subtitle}
+        ceremonyVenue={settings.ceremony_venue}
+        receptionVenue={settings.reception_venue}
+      />
 
       {/* Countdown Section */}
       <section style={{ backgroundColor: '#0a0a0a', borderBottom: '1px solid var(--gray-medium)' }}>
@@ -219,7 +126,7 @@ export default async function Home() {
             {groomName} & {brideName}
           </h3>
           <p style={{ color: 'var(--gray-light)', fontSize: '0.95rem', fontStyle: 'italic', marginBottom: '2rem' }}>
-            "Two hearts, one lifelong adventure. Thank you for being a chapter in our love story."
+            &ldquo;Two hearts, one lifelong adventure. Thank you for being a chapter in our love story.&rdquo;
           </p>
 
           <div style={{ display: 'flex', justifyContent: 'center', gap: '1.5rem', fontSize: '0.85rem', color: 'var(--gray-light)', marginBottom: '2rem', flexWrap: 'wrap' }}>

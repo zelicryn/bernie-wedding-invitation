@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Outfit:wght@300;400;500;600;700;800&display=swap');
 
 :root {
   --background: #141414;
@@ -10,6 +10,7 @@
   --gray-light: #808080;
   
   --font-sans: 'Outfit', sans-serif;
+  --font-serif: 'Cinzel', Georgia, serif;
 }
 
 * {
@@ -104,6 +105,53 @@ a {
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(20px); }
   to { opacity: 1; transform: translateY(0); }
+}
+
+/* Netflix Mobile App Hero Specific Styles */
+.hero-gold-dropcap {
+  font-family: var(--font-serif);
+  font-size: clamp(3rem, 7vw, 4.4rem);
+  font-weight: 800;
+  line-height: 0.85;
+  margin-right: 3px;
+  background: linear-gradient(180deg, #FFF8E1 0%, #F5D77F 25%, #D4AF37 55%, #996515 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.95));
+}
+
+.hero-gold-title-line {
+  font-family: var(--font-serif);
+  font-size: clamp(0.95rem, 2.5vw, 1.4rem);
+  font-weight: 700;
+  letter-spacing: 2px;
+  line-height: 1.15;
+  text-transform: uppercase;
+  background: linear-gradient(180deg, #FFF8E1 0%, #F5D77F 25%, #D4AF37 55%, #AA771C 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.9));
+}
+
+.hero-couple-names {
+  font-family: var(--font-serif);
+  font-size: clamp(1.15rem, 3.2vw, 1.6rem);
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-top: 0.35rem;
+  background: linear-gradient(180deg, #FFFFFF 0%, #E8E8E8 60%, #C0C0C0 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.95));
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 /* Base Layout Classes */

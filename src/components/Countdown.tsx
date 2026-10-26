@@ -43,16 +43,34 @@ export default function Countdown({ targetDate }: { targetDate: string }) {
   }
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        gap: 'clamp(0.6rem, 3vw, 2.2rem)',
-        justifyContent: 'center',
-        textAlign: 'center',
-        padding: 'clamp(1.5rem, 3vw, 2.5rem) 1rem',
-        flexWrap: 'wrap',
-      }}
-    >
+    <div style={{ padding: 'clamp(1.5rem, 3vw, 2.5rem) 1rem' }}>
+      <div style={{ textAlign: 'center', marginBottom: '1.2rem' }}>
+        <h3
+          style={{
+            fontSize: 'clamp(1.1rem, 3.5vw, 1.45rem)',
+            fontWeight: 800,
+            letterSpacing: '1.5px',
+            color: '#ffffff',
+            textTransform: 'uppercase',
+            margin: '0 0 0.3rem 0',
+          }}
+        >
+          Premiering Soon
+        </h3>
+        <p style={{ fontSize: '0.78rem', color: 'var(--gray-light)', textTransform: 'uppercase', letterSpacing: '1.5px', margin: 0 }}>
+          Countdown to the Wedding Premiere
+        </p>
+      </div>
+
+      <div
+        style={{
+          display: 'flex',
+          gap: 'clamp(0.6rem, 3vw, 2.2rem)',
+          justifyContent: 'center',
+          textAlign: 'center',
+          flexWrap: 'wrap',
+        }}
+      >
       {[
         { label: 'DAYS', value: timeLeft.days },
         { label: 'HOURS', value: timeLeft.hours },
@@ -97,6 +115,7 @@ export default function Countdown({ targetDate }: { targetDate: string }) {
           </span>
         </div>
       ))}
+      </div>
     </div>
   );
 }
