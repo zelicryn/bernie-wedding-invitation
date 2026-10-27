@@ -112,6 +112,7 @@ export default function AdminPage() {
   // Episodes & Entourage
   const [episodes, setEpisodes] = useState<EpisodeItem[]>([]);
   const [newEpisode, setNewEpisode] = useState({ title: '', date: '', description: '', photoUrl: '' });
+  const [editingEpisode, setEditingEpisode] = useState<EpisodeItem | null>(null);
   const [entourage, setEntourage] = useState<EntourageItem[]>([]);
   const [newEntourage, setNewEntourage] = useState({ name: '', role: '', photoUrl: '' });
 
@@ -2001,37 +2002,163 @@ export default function AdminPage() {
             </div>
 
             {/* Episodes List */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
               {episodes.map((ep) => (
                 <div
                   key={ep.id}
                   style={{
                     background: 'var(--gray-dark)',
-                    border: '1px solid var(--gray-medium)',
-                    borderRadius: '8px',
+                    border: editingEpisode?.id === ep.id ? '2px solid var(--accent-red)' : '1px solid var(--gray-medium)',
+                    borderRadius: '10px',
                     padding: '1.2rem',
-                    display: 'flex',
-                    gap: '1.2rem',
-                    alignItems: 'center',
                   }}
                 >
-                  <div style={{ width: '100px', height: '70px', position: 'relative', background: '#222', borderRadius: '6px', overflow: 'hidden', flexShrink: 0 }}>
-                    {ep.photoUrl && <Image src={ep.photoUrl} alt={ep.title} fill style={{ objectFit: 'cover' }} />}
-                  </div>
-                  <div style={{ flex: 1 }}>
-                    <h4 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#fff' }}>{ep.title} <span style={{ color: 'var(--accent-red)', fontSize: '0.85rem' }}>{ep.date}</span></h4>
-                    <p style={{ color: 'var(--gray-light)', fontSize: '0.9rem', margin: 0 }}>{ep.description}</p>
-                  </div>
-                  <button
-                    onClick={async () => {
-                      if (!confirm('Delete episode?')) return;
-                      await fetch(`/api/admin/episodes?id=${ep.id}`, { method: 'DELETE' });
-                      fetchEpisodes();
-                    }}
-                    style={{ background: 'none', border: 'none', color: '#ff8a8a', cursor: 'pointer' }}
-                  >
-                    Delete
-                  </button>
+                  {editingEpisode?.id === ep.id ? (
+                    /* Edit Form Inline */
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <h4 style={{ color: 'var(--accent-red)', fontWeight: 700, margin: 0, fontSize: '1.05rem' }}>
+                          Editing Episode
+                        </h4>
+                        <button
+                          onClick={() => setEditingEpisode(null)}
+                          style={{ background: 'none', border: 'none', color: 'var(--gray-light)', cursor: 'pointer', fontSize: '0.85rem' }}
+                        >
+                          ✕ Cancel
+                        </button>
+                      </div>
+
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
+                        <div>
+                          <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--gray-light)', marginBottom: '4px' }}>Episode Title</label>
+                          <input
+                            type="text"
+                            value={editingEpisode.title}
+                            onChange={(e) => setEditingEpisode({ ...editingEpisode, title: e.target.value })}
+                            style={{ width: '100%', padding: '0.7rem', background: '#111', border: '1px solid var(--gray-medium)', color: '#fff', borderRadius: '4px' }}
+                          />
+                        </div>
+                        <div>
+                          <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--gray-light)', marginBottom: '4px' }}>Date / Month</label>
+                          <input
+                            type="text"
+                            value={editingEpisode.date || ''}
+                            onChange={(e) => setEditingEpisode({ ...editingEpisode, date: e.target.value })}
+                            style={{ width: '100%', padding: '0.7rem', background: '#111', border: '1px solid var(--gray-medium)', color: '#fff', borderRadius: '4px' }}
+                          />
+                        </div>
+                        <div>
+                          <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--gray-light)', marginBottom: '4px' }}>Change Photo (Upload)</label>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={(e) => {
+                              const file = e.target.files?.[0];
+                              if (file) {
+                                handleFileUpload(file, (url) => setEditingEpisode({ ...editingEpisode, photoUrl: url }));
+                              }
+                            }}
+                            style={{ fontSize: '0.8rem' }}
+                          />
+                        </div>
+                      </div>
+
+                      {editingEpisode.photoUrl && (
+                        <div style={{ width: '140px', height: '90px', position: 'relative', borderRadius: '6px', overflow: 'hidden', border: '1px solid var(--gray-medium)' }}>
+                          <Image src={editingEpisode.photoUrl} alt="Preview" fill style={{ objectFit: 'cover' }} />
+                        </div>
+                      )}
+
+                      <div>
+                        <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--gray-light)', marginBottom: '4px' }}>Story Description</label>
+                        <textarea
+                          rows={3}
+                          value={editingEpisode.description || ''}
+                          onChange={(e) => setEditingEpisode({ ...editingEpisode, description: e.target.value })}
+                          style={{ width: '100%', padding: '0.7rem', background: '#111', border: '1px solid var(--gray-medium)', color: '#fff', borderRadius: '4px', lineHeight: 1.6 }}
+                        />
+                      </div>
+
+                      <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
+                        <button
+                          onClick={async () => {
+                            if (!editingEpisode.title.trim()) return;
+                            try {
+                              await fetch('/api/admin/episodes', {
+                                method: 'PUT',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify(editingEpisode),
+                              });
+                              setEditingEpisode(null);
+                              fetchEpisodes();
+                              showToast('Episode updated successfully!');
+                            } catch (e) {
+                              alert('Failed to update episode');
+                            }
+                          }}
+                          className="btn-primary"
+                          style={{ padding: '8px 18px', fontSize: '0.85rem' }}
+                        >
+                          Save Changes
+                        </button>
+                        <button
+                          onClick={() => setEditingEpisode(null)}
+                          className="btn-secondary"
+                          style={{ padding: '8px 14px', fontSize: '0.85rem' }}
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    /* Display View */
+                    <div style={{ display: 'flex', gap: '1.2rem', alignItems: 'center' }}>
+                      <div style={{ width: '110px', height: '75px', position: 'relative', background: '#222', borderRadius: '6px', overflow: 'hidden', flexShrink: 0 }}>
+                        {ep.photoUrl && <Image src={ep.photoUrl} alt={ep.title} fill style={{ objectFit: 'cover' }} />}
+                      </div>
+                      <div style={{ flex: 1 }}>
+                        <h4 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#fff', margin: '0 0 4px 0' }}>
+                          {ep.title} <span style={{ color: 'var(--accent-red)', fontSize: '0.85rem', marginLeft: '6px' }}>{ep.date}</span>
+                        </h4>
+                        <p style={{ color: 'var(--gray-light)', fontSize: '0.88rem', margin: 0, lineHeight: 1.5 }}>{ep.description}</p>
+                      </div>
+                      <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                        <button
+                          onClick={() => setEditingEpisode(ep)}
+                          style={{
+                            background: 'none',
+                            border: '1px solid var(--gray-medium)',
+                            color: '#fff',
+                            padding: '6px 12px',
+                            borderRadius: '4px',
+                            fontSize: '0.82rem',
+                            cursor: 'pointer',
+                          }}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={async () => {
+                            if (!confirm('Delete episode?')) return;
+                            await fetch(`/api/admin/episodes?id=${ep.id}`, { method: 'DELETE' });
+                            fetchEpisodes();
+                            showToast('Episode removed.');
+                          }}
+                          style={{
+                            background: 'none',
+                            border: '1px solid rgba(229,9,20,0.4)',
+                            color: '#ff8a8a',
+                            padding: '6px 12px',
+                            borderRadius: '4px',
+                            fontSize: '0.82rem',
+                            cursor: 'pointer',
+                          }}
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
