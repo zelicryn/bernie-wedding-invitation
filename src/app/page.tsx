@@ -13,13 +13,33 @@ import GiftSuggestion from '@/components/GiftSuggestion';
 import FaqSection from '@/components/FaqSection';
 import RsvpSystem from '@/components/RsvpSystem';
 
-import { getPersistentSettings } from '@/lib/blobStorage';
+import {
+  getPersistentSettings,
+  getPersistentSponsors,
+  getPersistentEntourage,
+  getPersistentGifts,
+  getPersistentEpisodes,
+  getPersistentFaqs,
+} from '@/lib/blobStorage';
 
 export const dynamic = 'force-dynamic';
 
 async function getInvitationData() {
   try {
-    const [settingsList, episodes, entourage, sponsors, faqs, gifts, blobSettings] = await Promise.all([
+    const [
+      settingsList,
+      dbEpisodes,
+      dbEntourage,
+      dbSponsors,
+      dbFaqs,
+      dbGifts,
+      blobSettings,
+      blobSponsors,
+      blobEntourage,
+      blobGifts,
+      blobEpisodes,
+      blobFaqs,
+    ] = await Promise.all([
       prisma.setting.findMany().catch(() => []),
       prisma.episode.findMany({ orderBy: { order: 'asc' } }).catch(() => []),
       prisma.entourage.findMany({ orderBy: { order: 'asc' } }).catch(() => []),
@@ -27,6 +47,11 @@ async function getInvitationData() {
       prisma.faq.findMany({ orderBy: { order: 'asc' } }).catch(() => []),
       prisma.giftOption.findMany({ orderBy: { order: 'asc' } }).catch(() => []),
       getPersistentSettings().catch(() => ({})),
+      getPersistentSponsors().catch(() => null),
+      getPersistentEntourage().catch(() => null),
+      getPersistentGifts().catch(() => null),
+      getPersistentEpisodes().catch(() => null),
+      getPersistentFaqs().catch(() => null),
     ]);
 
     const settings: Record<string, string> = {};
@@ -36,7 +61,14 @@ async function getInvitationData() {
 
     const mergedSettings = { ...settings, ...blobSettings };
 
-    return { settings: mergedSettings, episodes, entourage, sponsors, faqs, gifts };
+    return {
+      settings: mergedSettings,
+      episodes: blobEpisodes !== null ? blobEpisodes : dbEpisodes,
+      entourage: blobEntourage !== null ? blobEntourage : dbEntourage,
+      sponsors: blobSponsors !== null ? blobSponsors : dbSponsors,
+      faqs: blobFaqs !== null ? blobFaqs : dbFaqs,
+      gifts: blobGifts !== null ? blobGifts : dbGifts,
+    };
   } catch (err) {
     console.error('Error loading invitation data:', err);
     return {
@@ -95,6 +127,7 @@ export default async function Home() {
         receptionMapLink={settings.reception_map_link}
         dressCodeTitle={settings.dress_code_title}
         dressCodeDesc={settings.dress_code_desc}
+        dressCodePhoto={settings.dress_code_photo}
       />
 
       {/* Principal Sponsors Section (NEW) */}
@@ -128,23 +161,18 @@ export default async function Home() {
           <p style={{ color: 'var(--gray-light)', fontSize: '0.95rem', fontStyle: 'italic', marginBottom: '2rem' }}>
             &ldquo;Two hearts, one lifelong adventure. Thank you for being a chapter in our love story.&rdquo;
           </p>
-
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '1.5rem', fontSize: '0.85rem', color: 'var(--gray-light)', marginBottom: '2rem', flexWrap: 'wrap' }}>
-            <Link href="#home">Home</Link>
-            <Link href="#story">Our Story</Link>
-            <Link href="#details">Details</Link>
-            <Link href="#sponsors">Principal Sponsors</Link>
-            <Link href="#cast">The Cast</Link>
-            <Link href="#gift-guide">Gift Guide</Link>
-            <Link href="#faqs">FAQs</Link>
-            <Link href="#rsvp">RSVP</Link>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '1.5rem', marginBottom: '2rem', flexWrap: 'wrap' }}>
+            <Link href="#story" style={{ color: 'var(--gray-light)', fontSize: '0.9rem' }}>Episodes</Link>
+            <Link href="#details" style={{ color: 'var(--gray-light)', fontSize: '0.9rem' }}>Details</Link>
+            <Link href="#sponsors" style={{ color: 'var(--gray-light)', fontSize: '0.9rem' }}>Sponsors</Link>
+            <Link href="#cast" style={{ color: 'var(--gray-light)', fontSize: '0.9rem' }}>The Cast</Link>
+            <Link href="#gift-guide" style={{ color: 'var(--gray-light)', fontSize: '0.9rem' }}>Gift Guide</Link>
+            <Link href="#faq" style={{ color: 'var(--gray-light)', fontSize: '0.9rem' }}>FAQ</Link>
+            <Link href="#rsvp" style={{ color: 'var(--gray-light)', fontSize: '0.9rem' }}>RSVP</Link>
           </div>
-
-          <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '1.5rem', textAlign: 'center' }}>
-            <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.8rem', margin: 0 }}>
-              2026 Sandy & Bernadette Wedding Invitation. All rights reserved.
-            </p>
-          </div>
+          <p style={{ color: '#666', fontSize: '0.8rem' }}>
+            &copy; {new Date().getFullYear()} {groomName} & {brideName}. All rights reserved. Netflix-inspired Wedding Portal.
+          </p>
         </div>
       </footer>
     </main>

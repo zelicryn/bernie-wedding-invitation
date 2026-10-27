@@ -1,6 +1,7 @@
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
+import Image from 'next/image';
 
 interface WeddingDetailsProps {
   ceremonyTime?: string;
@@ -13,6 +14,7 @@ interface WeddingDetailsProps {
   receptionMapLink?: string;
   dressCodeTitle?: string;
   dressCodeDesc?: string;
+  dressCodePhoto?: string;
 }
 
 export default function WeddingDetails({
@@ -26,9 +28,76 @@ export default function WeddingDetails({
   receptionMapLink = "https://maps.google.com/?q=The+Manila+Hotel",
   dressCodeTitle = "Formal Attire",
   dressCodeDesc = "Gentlemen: Suit and tie or Barong Tagalog.\nLadies: Long evening gown in dark cinematic colors (Black, Deep Red, Emerald).",
+  dressCodePhoto,
 }: WeddingDetailsProps) {
+  const [zoomedImage, setZoomedImage] = useState<string | null>(null);
+
   return (
     <section id="details" className="section-padding container">
+      {/* Zoom Modal for Dress Code Moodboard */}
+      {zoomedImage && (
+        <div
+          onClick={() => setZoomedImage(null)}
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 9999,
+            backgroundColor: 'rgba(0,0,0,0.88)',
+            backdropFilter: 'blur(8px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '1.5rem',
+            cursor: 'zoom-out',
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              position: 'relative',
+              maxWidth: '900px',
+              width: '100%',
+              maxHeight: '88vh',
+              borderRadius: '12px',
+              overflow: 'hidden',
+              boxShadow: '0 25px 60px rgba(0,0,0,0.9)',
+              border: '1px solid rgba(255,255,255,0.2)',
+              background: '#111',
+            }}
+          >
+            <div style={{ position: 'relative', width: '100%', height: '80vh' }}>
+              <Image
+                src={zoomedImage}
+                alt="Dress Code Palette & Moodboard"
+                fill
+                style={{ objectFit: 'contain' }}
+              />
+            </div>
+            <button
+              onClick={() => setZoomedImage(null)}
+              style={{
+                position: 'absolute',
+                top: '12px',
+                right: '12px',
+                background: 'rgba(0,0,0,0.7)',
+                color: '#fff',
+                border: '1px solid rgba(255,255,255,0.3)',
+                borderRadius: '50%',
+                width: '38px',
+                height: '38px',
+                cursor: 'pointer',
+                fontSize: '1.2rem',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+      )}
+
       <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
         <span
           style={{
@@ -151,7 +220,7 @@ export default function WeddingDetails({
           </a>
         </div>
 
-        {/* Dress Code */}
+        {/* Dress Code with Moodboard / Style Photo */}
         <div
           className="fade-in"
           style={{
@@ -176,13 +245,60 @@ export default function WeddingDetails({
             <h3 style={{ fontSize: '1.8rem', fontWeight: 700, marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '2px', color: '#fff' }}>
               {dressCodeTitle}
             </h3>
-            <p style={{ fontSize: '1.1rem', fontWeight: 600, color: 'var(--accent-red)', marginBottom: '1rem' }}>
+            <p style={{ fontSize: '1.1rem', fontWeight: 600, color: 'var(--accent-red)', marginBottom: '0.8rem' }}>
               Cinematic Formal
             </p>
-            <p style={{ color: 'var(--gray-light)', marginBottom: '1.5rem', lineHeight: 1.7, fontSize: '0.95rem', whiteSpace: 'pre-line' }}>
+            <p style={{ color: 'var(--gray-light)', marginBottom: '1.2rem', lineHeight: 1.7, fontSize: '0.95rem', whiteSpace: 'pre-line' }}>
               {dressCodeDesc}
             </p>
+
+            {/* Visual Color Palette / Moodboard Guide */}
+            {dressCodePhoto && (
+              <div style={{ marginBottom: '1.2rem' }}>
+                <div
+                  onClick={() => setZoomedImage(dressCodePhoto)}
+                  style={{
+                    position: 'relative',
+                    width: '100%',
+                    height: '190px',
+                    borderRadius: '8px',
+                    overflow: 'hidden',
+                    border: '1px solid rgba(255,255,255,0.18)',
+                    cursor: 'zoom-in',
+                    boxShadow: '0 6px 18px rgba(0,0,0,0.5)',
+                  }}
+                  title="Click to zoom attire & color palette guide"
+                >
+                  <Image
+                    src={dressCodePhoto}
+                    alt="Attire Style & Color Guide"
+                    fill
+                    style={{ objectFit: 'cover' }}
+                  />
+                  <div
+                    style={{
+                      position: 'absolute',
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      background: 'linear-gradient(to top, rgba(0,0,0,0.85), transparent)',
+                      padding: '8px',
+                      fontSize: '0.78rem',
+                      color: '#fff',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '5px',
+                    }}
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
+                    <span>Click to view color palette & style</span>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
+
           <div
             style={{
               padding: '0.8rem',

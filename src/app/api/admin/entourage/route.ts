@@ -1,10 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
+import { getPersistentEntourage, savePersistentEntourage } from '@/lib/blobStorage';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
+    const blobList = await getPersistentEntourage();
+    if (blobList !== null) {
+      return NextResponse.json({ entourage: blobList });
+    }
+
     const entourage = await prisma.entourage.findMany({
       orderBy: { order: 'asc' },
     });
@@ -24,18 +30,37 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Name is required' }, { status: 400 });
     }
 
-    const item = await prisma.entourage.create({
-      data: {
-        name: name.trim(),
-        role: (role || 'Entourage').trim(),
-        category: (category || 'Entourage').trim(),
-        description: description ? description.trim() : null,
-        photoUrl: photoUrl || null,
-        order: Number(order) || 0,
-      },
-    });
+    let list = await getPersistentEntourage();
+    if (!list) {
+      list = await prisma.entourage.findMany({ orderBy: { order: 'asc' } }).catch(() => []);
+    }
 
-    return NextResponse.json({ success: true, item });
+    const newItem = {
+      id: `ent_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
+      name: name.trim(),
+      role: (role || 'Entourage').trim(),
+      category: (category || 'Entourage').trim(),
+      description: description ? description.trim() : null,
+      photoUrl: photoUrl || null,
+      order: Number(order) || (list.length + 1),
+    };
+
+    const updatedList = [...list, newItem].sort((a, b) => a.order - b.order);
+    await savePersistentEntourage(updatedList);
+
+    prisma.entourage.create({
+      data: {
+        id: newItem.id,
+        name: newItem.name,
+        role: newItem.role,
+        category: newItem.category,
+        description: newItem.description,
+        photoUrl: newItem.photoUrl,
+        order: newItem.order,
+      },
+    }).catch(() => {});
+
+    return NextResponse.json({ success: true, item: newItem });
   } catch (error) {
     return NextResponse.json({ error: 'Failed to create entourage member' }, { status: 500 });
   }
@@ -48,7 +73,31 @@ export async function PUT(req: NextRequest) {
 
     if (!id) return NextResponse.json({ error: 'ID is required' }, { status: 400 });
 
-    const updated = await prisma.entourage.update({
+    let list = await getPersistentEntourage();
+    if (!list) {
+      list = await prisma.entourage.findMany({ orderBy: { order: 'asc' } }).catch(() => []);
+    }
+
+    let updatedItem: any = null;
+    const updatedList = list.map((item) => {
+      if (item.id === id) {
+        updatedItem = {
+          ...item,
+          name: name ? name.trim() : item.name,
+          role: role !== undefined ? role.trim() : item.role,
+          category: category !== undefined ? category.trim() : item.category,
+          description: description !== undefined ? (description ? description.trim() : null) : item.description,
+          photoUrl: photoUrl !== undefined ? photoUrl : item.photoUrl,
+          order: order !== undefined ? Number(order) : item.order,
+        };
+        return updatedItem;
+      }
+      return item;
+    });
+
+    await savePersistentEntourage(updatedList);
+
+    prisma.entourage.update({
       where: { id },
       data: {
         name: name ? name.trim() : undefined,
@@ -58,9 +107,9 @@ export async function PUT(req: NextRequest) {
         photoUrl: photoUrl !== undefined ? photoUrl : undefined,
         order: order !== undefined ? Number(order) : undefined,
       },
-    });
+    }).catch(() => {});
 
-    return NextResponse.json({ success: true, item: updated });
+    return NextResponse.json({ success: true, item: updatedItem });
   } catch (error) {
     return NextResponse.json({ error: 'Failed to update entourage member' }, { status: 500 });
   }
@@ -72,7 +121,16 @@ export async function DELETE(req: NextRequest) {
     const id = searchParams.get('id');
     if (!id) return NextResponse.json({ error: 'ID is required' }, { status: 400 });
 
-    await prisma.entourage.delete({ where: { id } });
+    let list = await getPersistentEntourage();
+    if (!list) {
+      list = await prisma.entourage.findMany({ orderBy: { order: 'asc' } }).catch(() => []);
+    }
+
+    const filtered = list.filter((item) => item.id !== id);
+    await savePersistentEntourage(filtered);
+
+    prisma.entourage.delete({ where: { id } }).catch(() => {});
+
     return NextResponse.json({ success: true });
   } catch (error) {
     return NextResponse.json({ error: 'Failed to delete entourage member' }, { status: 500 });

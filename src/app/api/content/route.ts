@@ -1,12 +1,33 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
-import { getPersistentSettings } from '@/lib/blobStorage';
+import {
+  getPersistentSettings,
+  getPersistentSponsors,
+  getPersistentEntourage,
+  getPersistentGifts,
+  getPersistentEpisodes,
+  getPersistentFaqs,
+} from '@/lib/blobStorage';
 
 export const dynamic = 'force-dynamic';
 
 export async function GET() {
   try {
-    const [settingsList, episodes, entourage, sponsors, faqs, gifts, gallery, blobSettings] = await Promise.all([
+    const [
+      settingsList,
+      dbEpisodes,
+      dbEntourage,
+      dbSponsors,
+      dbFaqs,
+      dbGifts,
+      gallery,
+      blobSettings,
+      blobSponsors,
+      blobEntourage,
+      blobGifts,
+      blobEpisodes,
+      blobFaqs,
+    ] = await Promise.all([
       prisma.setting.findMany().catch(() => []),
       prisma.episode.findMany({ orderBy: { order: 'asc' } }).catch(() => []),
       prisma.entourage.findMany({ orderBy: { order: 'asc' } }).catch(() => []),
@@ -15,6 +36,11 @@ export async function GET() {
       prisma.giftOption.findMany({ orderBy: { order: 'asc' } }).catch(() => []),
       prisma.gallery.findMany({ orderBy: { order: 'asc' } }).catch(() => []),
       getPersistentSettings().catch(() => ({})),
+      getPersistentSponsors().catch(() => null),
+      getPersistentEntourage().catch(() => null),
+      getPersistentGifts().catch(() => null),
+      getPersistentEpisodes().catch(() => null),
+      getPersistentFaqs().catch(() => null),
     ]);
 
     const settings: Record<string, string> = {};
@@ -26,11 +52,11 @@ export async function GET() {
 
     return NextResponse.json({
       settings: mergedSettings,
-      episodes,
-      entourage,
-      sponsors,
-      faqs,
-      gifts,
+      episodes: blobEpisodes !== null ? blobEpisodes : dbEpisodes,
+      entourage: blobEntourage !== null ? blobEntourage : dbEntourage,
+      sponsors: blobSponsors !== null ? blobSponsors : dbSponsors,
+      faqs: blobFaqs !== null ? blobFaqs : dbFaqs,
+      gifts: blobGifts !== null ? blobGifts : dbGifts,
       gallery,
     });
   } catch (error) {

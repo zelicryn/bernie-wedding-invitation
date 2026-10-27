@@ -1473,6 +1473,127 @@ export default function AdminPage() {
                 Save Venue Information
               </button>
             </div>
+
+            {/* Dress Code Moodboard / Color Palette Guide */}
+            <div style={{ background: 'var(--gray-dark)', border: '1px solid var(--gray-medium)', borderRadius: '12px', padding: '2rem' }}>
+              <h3 style={{ fontSize: '1.4rem', fontWeight: 700, marginBottom: '0.5rem', color: '#fff' }}>
+                Dress Code & Attire Color Palette Guide
+              </h3>
+              <p style={{ color: 'var(--gray-light)', fontSize: '0.9rem', marginBottom: '1.5rem' }}>
+                Upload an image or moodboard showing your wedding color swatches and sample dresses/suits so guests know exactly what colors and styles to wear.
+              </p>
+
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem' }}>
+                {/* Dress Code Text Fields */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.85rem', marginBottom: '4px', color: 'var(--gray-light)' }}>Dress Code Title</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Dress Code: Black Tie / Formal"
+                      value={settings.dress_code_title || ''}
+                      onChange={(e) => setSettings({ ...settings, dress_code_title: e.target.value })}
+                      style={{ width: '100%', padding: '0.8rem', background: '#111', border: '1px solid var(--gray-medium)', color: '#fff', borderRadius: '4px' }}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{ display: 'block', fontSize: '0.85rem', marginBottom: '4px', color: 'var(--gray-light)' }}>Attire Instructions / Description</label>
+                    <textarea
+                      rows={4}
+                      placeholder="e.g. Gentlemen: Tuxedo or Barong Tagalog.\nLadies: Long gown in dark cinematic tones (Emerald, Midnight Blue, Burgundy, Black)."
+                      value={settings.dress_code_desc || ''}
+                      onChange={(e) => setSettings({ ...settings, dress_code_desc: e.target.value })}
+                      style={{ width: '100%', padding: '0.8rem', background: '#111', border: '1px solid var(--gray-medium)', color: '#fff', borderRadius: '4px', lineHeight: 1.6 }}
+                    />
+                  </div>
+                </div>
+
+                {/* Dress Code Moodboard Image Upload */}
+                <div style={{ background: 'rgba(255,255,255,0.03)', padding: '1.5rem', borderRadius: '10px', border: '1px solid var(--gray-medium)' }}>
+                  <h4 style={{ fontSize: '1.05rem', fontWeight: 600, marginBottom: '0.4rem' }}>Color Palette & Attire Moodboard Picture</h4>
+                  <p style={{ fontSize: '0.8rem', color: 'var(--gray-light)', marginBottom: '1rem' }}>
+                    Preview shown on the invitation card with click-to-zoom for guests.
+                  </p>
+
+                  <div
+                    style={{
+                      height: '160px',
+                      background: '#222',
+                      borderRadius: '8px',
+                      overflow: 'hidden',
+                      position: 'relative',
+                      marginBottom: '1rem',
+                      border: '1px solid rgba(255,255,255,0.1)',
+                    }}
+                  >
+                    {settings.dress_code_photo ? (
+                      <Image src={settings.dress_code_photo} alt="Dress Code Guide" fill style={{ objectFit: 'contain' }} />
+                    ) : (
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: 'var(--gray-light)', fontSize: '0.85rem' }}>
+                        No Moodboard Image Uploaded Yet
+                      </div>
+                    )}
+                  </div>
+
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+                    <label style={{ fontSize: '0.8rem', fontWeight: 600 }}>Option A: Upload Moodboard / Swatches</label>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      disabled={uploadingField === 'dress_code_photo'}
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          setUploadingField('dress_code_photo');
+                          try {
+                            await handleFileUpload(file, (url) => {
+                              handleSaveSettings({ dress_code_photo: url });
+                            });
+                          } finally {
+                            setUploadingField(null);
+                          }
+                        }
+                      }}
+                      style={{ fontSize: '0.85rem' }}
+                    />
+                    {uploadingField === 'dress_code_photo' && (
+                      <span style={{ fontSize: '0.8rem', color: '#ffb703' }}>⏳ Uploading and optimizing dress code image...</span>
+                    )}
+
+                    <label style={{ fontSize: '0.8rem', fontWeight: 600, marginTop: '0.4rem' }}>Option B: Paste Image URL</label>
+                    <input
+                      type="text"
+                      value={settings.dress_code_photo || ''}
+                      onChange={(e) => setSettings({ ...settings, dress_code_photo: e.target.value })}
+                      placeholder="https://..."
+                      style={{
+                        padding: '0.6rem',
+                        background: '#111',
+                        border: '1px solid var(--gray-medium)',
+                        color: '#fff',
+                        borderRadius: '4px',
+                        fontSize: '0.85rem',
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <button
+                onClick={() =>
+                  handleSaveSettings({
+                    dress_code_title: settings.dress_code_title || 'Dress Code: Black Tie / Formal',
+                    dress_code_desc: settings.dress_code_desc || '',
+                    dress_code_photo: settings.dress_code_photo || '',
+                  })
+                }
+                className="btn-primary"
+                style={{ marginTop: '1.5rem' }}
+              >
+                Save Dress Code Details & Photo
+              </button>
+            </div>
           </div>
         )}
 

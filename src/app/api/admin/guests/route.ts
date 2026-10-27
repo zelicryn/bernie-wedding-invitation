@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
+import { getPersistentGuests, savePersistentGuests, PersistentGuest } from '@/lib/blobStorage';
 
 export const dynamic = 'force-dynamic';
 
@@ -9,47 +10,33 @@ export async function GET(req: NextRequest) {
     const search = searchParams.get('search') || '';
     const statusFilter = searchParams.get('status') || '';
 
-    let allGuests: any[] = [];
-    try {
-      allGuests = await prisma.guest.findMany({
-        orderBy: { createdAt: 'desc' },
-      });
-    } catch (dbErr) {
-      console.warn('Prisma query for guests failed, returning initial guests:', dbErr);
-      allGuests = [
-        {
-          id: '1',
-          name: 'Mr. & Mrs. Juan dela Cruz',
-          seats: 2,
-          status: 'CONFIRMED',
-          attendingCount: 2,
-          accompanyingNames: 'Maria dela Cruz',
-          phone: '0917 111 2233',
-          notes: 'Principal table',
-          createdAt: new Date().toISOString(),
-        },
-        {
-          id: '2',
-          name: 'Dr. Evelyn Tan',
-          seats: 2,
-          status: 'CONFIRMED',
-          attendingCount: 2,
-          accompanyingNames: 'Hon. Roberto Tan',
-          phone: '0918 222 3344',
-          notes: 'Sponsors table',
-          createdAt: new Date().toISOString(),
-        },
-        {
-          id: '3',
-          name: 'Engr. Danilo Ramos',
-          seats: 2,
-          status: 'PENDING',
-          attendingCount: 0,
-          phone: '0919 333 4455',
-          notes: '',
-          createdAt: new Date().toISOString(),
-        },
-      ];
+    let allGuests: PersistentGuest[] = [];
+
+    // 1. Check persistent Blob storage first
+    const blobGuests = await getPersistentGuests();
+    if (blobGuests !== null) {
+      allGuests = blobGuests;
+    } else {
+      try {
+        const dbGuests = await prisma.guest.findMany({
+          orderBy: { createdAt: 'desc' },
+        });
+        allGuests = dbGuests.map((g) => ({
+          id: g.id,
+          name: g.name,
+          email: g.email,
+          phone: g.phone,
+          seats: g.seats,
+          status: g.status,
+          attendingCount: g.attendingCount,
+          accompanyingNames: g.accompanyingNames,
+          notes: g.notes,
+          createdAt: g.createdAt.toISOString(),
+        }));
+      } catch (dbErr) {
+        console.warn('Prisma query for guests failed, returning fallback:', dbErr);
+        allGuests = [];
+      }
     }
 
     let filtered = allGuests;
@@ -66,7 +53,6 @@ export async function GET(req: NextRequest) {
       filtered = filtered.filter((g) => g.status === statusFilter);
     }
 
-    // Calculate statistics
     const totalGuests = allGuests.length;
     const totalSeatsAllocated = allGuests.reduce((acc, g) => acc + g.seats, 0);
     const confirmedCount = allGuests.filter((g) => g.status === 'CONFIRMED').length;
@@ -97,22 +83,57 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
 
-    // Check if bulk insert
+    let allGuests: PersistentGuest[] = (await getPersistentGuests()) || [];
+    if (allGuests.length === 0) {
+      const dbGuests = await prisma.guest.findMany().catch(() => []);
+      if (dbGuests.length > 0) {
+        allGuests = dbGuests.map((g) => ({
+          id: g.id,
+          name: g.name,
+          email: g.email,
+          phone: g.phone,
+          seats: g.seats,
+          status: g.status,
+          attendingCount: g.attendingCount,
+          accompanyingNames: g.accompanyingNames,
+          notes: g.notes,
+          createdAt: g.createdAt.toISOString(),
+        }));
+      }
+    }
+
+    // Bulk insert
     if (Array.isArray(body.bulkGuests)) {
-      const created = [];
+      const created: PersistentGuest[] = [];
       for (const item of body.bulkGuests) {
         if (item.name && item.name.trim()) {
-          const guest = await prisma.guest.create({
+          const newG: PersistentGuest = {
+            id: `gst_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
+            name: item.name.trim(),
+            seats: Math.max(1, Number(item.seats) || 1),
+            phone: item.phone ? item.phone.trim() : null,
+            notes: item.notes ? item.notes.trim() : null,
+            status: 'PENDING',
+            attendingCount: 0,
+            accompanyingNames: null,
+            createdAt: new Date().toISOString(),
+          };
+          created.push(newG);
+          allGuests.unshift(newG);
+
+          prisma.guest.create({
             data: {
-              name: item.name.trim(),
-              seats: Math.max(1, Number(item.seats) || 1),
-              phone: item.phone ? item.phone.trim() : null,
-              notes: item.notes ? item.notes.trim() : null,
+              id: newG.id,
+              name: newG.name,
+              seats: newG.seats,
+              phone: newG.phone,
+              notes: newG.notes,
             },
-          });
-          created.push(guest);
+          }).catch(() => {});
         }
       }
+
+      await savePersistentGuests(allGuests);
       return NextResponse.json({ success: true, count: created.length, created });
     }
 
@@ -122,15 +143,32 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Guest name is required' }, { status: 400 });
     }
 
-    const newGuest = await prisma.guest.create({
+    const newGuest: PersistentGuest = {
+      id: `gst_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
+      name: name.trim(),
+      seats: Math.max(1, Number(seats) || 1),
+      phone: phone ? phone.trim() : null,
+      email: email ? email.trim() : null,
+      notes: notes ? notes.trim() : null,
+      status: 'PENDING',
+      attendingCount: 0,
+      accompanyingNames: null,
+      createdAt: new Date().toISOString(),
+    };
+
+    allGuests.unshift(newGuest);
+    await savePersistentGuests(allGuests);
+
+    prisma.guest.create({
       data: {
-        name: name.trim(),
-        seats: Math.max(1, Number(seats) || 1),
-        phone: phone ? phone.trim() : null,
-        email: email ? email.trim() : null,
-        notes: notes ? notes.trim() : null,
+        id: newGuest.id,
+        name: newGuest.name,
+        seats: newGuest.seats,
+        phone: newGuest.phone,
+        email: newGuest.email,
+        notes: newGuest.notes,
       },
-    });
+    }).catch(() => {});
 
     return NextResponse.json({ success: true, guest: newGuest });
   } catch (error) {
@@ -148,7 +186,45 @@ export async function PUT(req: NextRequest) {
       return NextResponse.json({ error: 'Guest ID is required' }, { status: 400 });
     }
 
-    const updated = await prisma.guest.update({
+    let allGuests: PersistentGuest[] = (await getPersistentGuests()) || [];
+    if (allGuests.length === 0) {
+      const dbGuests = await prisma.guest.findMany().catch(() => []);
+      allGuests = dbGuests.map((g) => ({
+        id: g.id,
+        name: g.name,
+        email: g.email,
+        phone: g.phone,
+        seats: g.seats,
+        status: g.status,
+        attendingCount: g.attendingCount,
+        accompanyingNames: g.accompanyingNames,
+        notes: g.notes,
+        createdAt: g.createdAt.toISOString(),
+      }));
+    }
+
+    let updatedGuest: PersistentGuest | null = null;
+    const updatedList = allGuests.map((g) => {
+      if (g.id === id) {
+        updatedGuest = {
+          ...g,
+          name: name !== undefined ? name.trim() : g.name,
+          seats: seats !== undefined ? Math.max(1, Number(seats) || 1) : g.seats,
+          status: status !== undefined ? status : g.status,
+          attendingCount: attendingCount !== undefined ? Number(attendingCount) : g.attendingCount,
+          accompanyingNames: accompanyingNames !== undefined ? accompanyingNames : g.accompanyingNames,
+          notes: notes !== undefined ? notes : g.notes,
+          phone: phone !== undefined ? phone : g.phone,
+          email: email !== undefined ? email : g.email,
+        };
+        return updatedGuest;
+      }
+      return g;
+    });
+
+    await savePersistentGuests(updatedList);
+
+    prisma.guest.update({
       where: { id },
       data: {
         name: name !== undefined ? name.trim() : undefined,
@@ -160,9 +236,9 @@ export async function PUT(req: NextRequest) {
         phone: phone !== undefined ? phone : undefined,
         email: email !== undefined ? email : undefined,
       },
-    });
+    }).catch(() => {});
 
-    return NextResponse.json({ success: true, guest: updated });
+    return NextResponse.json({ success: true, guest: updatedGuest });
   } catch (error) {
     console.error('Error updating guest:', error);
     return NextResponse.json({ error: 'Failed to update guest' }, { status: 500 });
@@ -178,9 +254,11 @@ export async function DELETE(req: NextRequest) {
       return NextResponse.json({ error: 'Guest ID is required' }, { status: 400 });
     }
 
-    await prisma.guest.delete({
-      where: { id },
-    });
+    let allGuests: PersistentGuest[] = (await getPersistentGuests()) || [];
+    const filtered = allGuests.filter((g) => g.id !== id);
+    await savePersistentGuests(filtered);
+
+    prisma.guest.delete({ where: { id } }).catch(() => {});
 
     return NextResponse.json({ success: true });
   } catch (error) {
