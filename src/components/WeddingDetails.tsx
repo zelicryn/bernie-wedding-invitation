@@ -13,6 +13,7 @@ interface WeddingDetailsProps {
   receptionAddress?: string;
   receptionMapLink?: string;
   dressCodeTitle?: string;
+  dressCodeSubtitle?: string;
   dressCodeDesc?: string;
   dressCodePhoto?: string;
 }
@@ -27,6 +28,7 @@ export default function WeddingDetails({
   receptionAddress = "1 Rizal Park, Ermita, Manila, Philippines",
   receptionMapLink = "https://maps.google.com/?q=The+Manila+Hotel",
   dressCodeTitle = "Formal Attire",
+  dressCodeSubtitle = "Cinematic Formal",
   dressCodeDesc = "Gentlemen: Suit and tie or Barong Tagalog.\nLadies: Long evening gown in dark cinematic colors (Black, Deep Red, Emerald).",
   dressCodePhoto,
 }: WeddingDetailsProps) {
@@ -246,7 +248,7 @@ export default function WeddingDetails({
               {dressCodeTitle}
             </h3>
             <p style={{ fontSize: '1.1rem', fontWeight: 600, color: 'var(--accent-red)', marginBottom: '0.8rem' }}>
-              Cinematic Formal
+              {dressCodeSubtitle || 'Cinematic Formal'}
             </p>
             <p style={{ color: 'var(--gray-light)', marginBottom: '1.2rem', lineHeight: 1.7, fontSize: '0.95rem', whiteSpace: 'pre-line' }}>
               {dressCodeDesc}

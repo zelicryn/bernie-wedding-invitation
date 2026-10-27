@@ -126,6 +126,7 @@ export default async function Home() {
         receptionAddress={settings.reception_address}
         receptionMapLink={settings.reception_map_link}
         dressCodeTitle={settings.dress_code_title}
+        dressCodeSubtitle={settings.dress_code_subtitle}
         dressCodeDesc={settings.dress_code_desc}
         dressCodePhoto={settings.dress_code_photo}
       />

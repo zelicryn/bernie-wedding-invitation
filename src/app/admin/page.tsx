@@ -1499,6 +1499,19 @@ export default function AdminPage() {
                   </div>
 
                   <div>
+                    <label style={{ display: 'block', fontSize: '0.85rem', marginBottom: '4px', color: 'var(--gray-light)' }}>
+                      Style / Subtitle (Red Accent Text)
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Cinematic Formal / Black Tie Optional"
+                      value={settings.dress_code_subtitle || ''}
+                      onChange={(e) => setSettings({ ...settings, dress_code_subtitle: e.target.value })}
+                      style={{ width: '100%', padding: '0.8rem', background: '#111', border: '1px solid var(--gray-medium)', color: '#fff', borderRadius: '4px' }}
+                    />
+                  </div>
+
+                  <div>
                     <label style={{ display: 'block', fontSize: '0.85rem', marginBottom: '4px', color: 'var(--gray-light)' }}>Attire Instructions / Description</label>
                     <textarea
                       rows={4}
@@ -1585,6 +1598,7 @@ export default function AdminPage() {
                 onClick={() =>
                   handleSaveSettings({
                     dress_code_title: settings.dress_code_title || 'Dress Code: Black Tie / Formal',
+                    dress_code_subtitle: settings.dress_code_subtitle || 'Cinematic Formal',
                     dress_code_desc: settings.dress_code_desc || '',
                     dress_code_photo: settings.dress_code_photo || '',
                   })
