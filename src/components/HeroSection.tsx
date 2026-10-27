@@ -433,6 +433,48 @@ export default function HeroSection({
             }}
           >
 
+            {/* Subtitle Line with Badge */}
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '6px',
+                marginBottom: '1.25rem',
+              }}
+            >
+              <p
+                title={subtitle}
+                style={{
+                  fontSize: '0.86rem',
+                  color: 'rgba(255, 255, 255, 0.92)',
+                  fontWeight: 500,
+                  margin: 0,
+                  letterSpacing: '0.2px',
+                }}
+              >
+                New episode coming on Saturday, Dec 7
+              </p>
+              {/* Small cute badge as seen in screenshot */}
+              <span
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  background: 'linear-gradient(135deg, #FF3366, #E50914)',
+                  color: '#fff',
+                  borderRadius: '4px',
+                  padding: '2px 5px',
+                  fontSize: '0.62rem',
+                  fontWeight: 800,
+                  letterSpacing: '0.5px',
+                  lineHeight: 1,
+                  boxShadow: '0 2px 6px rgba(229, 9, 20, 0.4)',
+                }}
+              >
+                TOP 10
+              </span>
+            </div>
 
             {/* Two Side-by-Side Action Buttons: [ ▶ Play Series ] and [ + My List ] */}
             <div
