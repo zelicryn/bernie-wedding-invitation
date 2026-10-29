@@ -108,6 +108,7 @@ export default function AdminPage() {
   // FAQs State
   const [faqs, setFaqs] = useState<FaqItem[]>([]);
   const [newFaq, setNewFaq] = useState({ question: '', answer: '' });
+  const [editingFaq, setEditingFaq] = useState<FaqItem | null>(null);
 
   // Episodes & Entourage
   const [episodes, setEpisodes] = useState<EpisodeItem[]>([]);
@@ -502,6 +503,24 @@ export default function AdminPage() {
     await fetch(`/api/admin/faqs?id=${id}`, { method: 'DELETE' });
     fetchFaqs();
     showToast('FAQ removed.');
+  };
+
+  const handleUpdateFaq = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingFaq || !editingFaq.question.trim() || !editingFaq.answer.trim()) return;
+    try {
+      await fetch('/api/admin/faqs', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(editingFaq),
+      });
+      setEditingFaq(null);
+      fetchFaqs();
+      showToast('FAQ updated successfully!');
+    } catch (e) {
+      console.error(e);
+      showToast('Failed to update FAQ');
+    }
   };
 
   // Filtered Guests
@@ -1994,29 +2013,109 @@ export default function AdminPage() {
                   key={f.id}
                   style={{
                     background: 'var(--gray-dark)',
-                    border: '1px solid var(--gray-medium)',
+                    border: editingFaq?.id === f.id ? '2px solid var(--accent-red)' : '1px solid var(--gray-medium)',
                     borderRadius: '8px',
                     padding: '1.2rem',
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'flex-start',
-                    gap: '1rem',
+                    transition: 'border-color 0.2s ease',
                   }}
                 >
-                  <div>
-                    <h4 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#fff', marginBottom: '6px' }}>
-                      {i + 1}. {f.question}
-                    </h4>
-                    <p style={{ color: 'var(--gray-light)', fontSize: '0.95rem', lineHeight: 1.6, margin: 0 }}>
-                      {f.answer}
-                    </p>
-                  </div>
-                  <button
-                    onClick={() => handleDeleteFaq(f.id)}
-                    style={{ background: 'none', border: 'none', color: '#ff8a8a', cursor: 'pointer', fontSize: '0.85rem', flexShrink: 0 }}
-                  >
-                    Delete
-                  </button>
+                  {editingFaq?.id === f.id ? (
+                    /* Inline Edit Form */
+                    <form onSubmit={handleUpdateFaq} style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.2rem' }}>
+                        <span style={{ color: 'var(--accent-red)', fontWeight: 700, fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '1px' }}>
+                          Edit Question #{i + 1}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => setEditingFaq(null)}
+                          style={{ background: 'none', border: 'none', color: 'var(--gray-light)', cursor: 'pointer', fontSize: '0.85rem' }}
+                        >
+                          ✕ Cancel
+                        </button>
+                      </div>
+
+                      <div>
+                        <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--gray-light)', marginBottom: '4px' }}>
+                          Question
+                        </label>
+                        <input
+                          type="text"
+                          value={editingFaq.question}
+                          onChange={(e) => setEditingFaq({ ...editingFaq, question: e.target.value })}
+                          style={{ width: '100%', padding: '0.7rem', background: '#111', border: '1px solid var(--gray-medium)', color: '#fff', borderRadius: '4px' }}
+                          required
+                        />
+                      </div>
+
+                      <div>
+                        <label style={{ display: 'block', fontSize: '0.8rem', color: 'var(--gray-light)', marginBottom: '4px' }}>
+                          Answer
+                        </label>
+                        <textarea
+                          rows={3}
+                          value={editingFaq.answer}
+                          onChange={(e) => setEditingFaq({ ...editingFaq, answer: e.target.value })}
+                          style={{ width: '100%', padding: '0.7rem', background: '#111', border: '1px solid var(--gray-medium)', color: '#fff', borderRadius: '4px', lineHeight: 1.5 }}
+                          required
+                        />
+                      </div>
+
+                      <div style={{ display: 'flex', gap: '0.6rem', marginTop: '0.2rem' }}>
+                        <button type="submit" className="btn-primary" style={{ padding: '0.5rem 1.2rem', fontSize: '0.85rem' }}>
+                          Save Changes
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setEditingFaq(null)}
+                          className="btn-secondary"
+                          style={{ padding: '0.5rem 1rem', fontSize: '0.85rem' }}
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </form>
+                  ) : (
+                    /* Display Card */
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '1rem' }}>
+                      <div style={{ flex: 1 }}>
+                        <h4 style={{ fontSize: '1.1rem', fontWeight: 700, color: '#fff', marginBottom: '6px' }}>
+                          {i + 1}. {f.question}
+                        </h4>
+                        <p style={{ color: 'var(--gray-light)', fontSize: '0.95rem', lineHeight: 1.6, margin: 0, whiteSpace: 'pre-line' }}>
+                          {f.answer}
+                        </p>
+                      </div>
+
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', flexShrink: 0 }}>
+                        <button
+                          type="button"
+                          onClick={() => setEditingFaq(f)}
+                          style={{
+                            background: 'rgba(255,255,255,0.06)',
+                            border: '1px solid var(--gray-medium)',
+                            color: '#fff',
+                            borderRadius: '4px',
+                            padding: '4px 10px',
+                            cursor: 'pointer',
+                            fontSize: '0.85rem',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '4px',
+                          }}
+                        >
+                          ✏️ Edit
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => handleDeleteFaq(f.id)}
+                          style={{ background: 'none', border: 'none', color: '#ff8a8a', cursor: 'pointer', fontSize: '0.85rem' }}
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
