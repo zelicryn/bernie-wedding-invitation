@@ -39,10 +39,10 @@ export default function Entourage({ members = [] }: { members?: CastMember[] }) 
           Starring Characters
         </span>
         <h2 className="section-title" style={{ marginBottom: '1rem' }}>
-          THE CAST & ENTOURAGE
+          THE CAST
         </h2>
         <p style={{ fontSize: '1.15rem', color: 'var(--gray-light)', fontStyle: 'italic', maxWidth: '600px', margin: '0 auto' }}>
-          The treasured friends and family members playing starring roles in our love story.
+          Two leads, one furry sidekick, and the friend who made the whole love story possible.
         </p>
       </div>
 

@@ -453,7 +453,7 @@ export default function HeroSection({
                   letterSpacing: '0.2px',
                 }}
               >
-                New episode coming on Saturday, Dec 7
+                New episode on Monday, Dec 7
               </p>
               {/* Small cute badge as seen in screenshot */}
               <span
@@ -860,7 +860,7 @@ export default function HeroSection({
                 { label: 'Our Story Episodes', href: '#story', tag: '3 Episodes' },
                 { label: 'Wedding Details & Maps', href: '#details', tag: 'Cathedral & Hotel' },
                 { label: 'Principal Sponsors', href: '#sponsors', tag: 'Ninongs & Ninangs' },
-                { label: 'The Cast & Entourage', href: '#cast', tag: 'Bridal Party' },
+                { label: 'The Cast', href: '#cast', tag: 'Key Characters' },
                 { label: 'Gift Guide & Registry', href: '#gift-guide', tag: 'Registry' },
                 { label: 'Frequently Asked Questions', href: '#faqs', tag: 'FAQs' },
                 { label: 'Confirm Your RSVP', href: '#rsvp', tag: 'Confirm Seat' },

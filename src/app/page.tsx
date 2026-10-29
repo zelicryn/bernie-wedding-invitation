@@ -121,10 +121,12 @@ export default async function Home() {
         ceremonyVenue={settings.ceremony_venue}
         ceremonyAddress={settings.ceremony_address}
         ceremonyMapLink={settings.ceremony_map_link}
+        ceremonyPhoto={settings.ceremony_photo}
         receptionTime={settings.reception_time}
         receptionVenue={settings.reception_venue}
         receptionAddress={settings.reception_address}
         receptionMapLink={settings.reception_map_link}
+        receptionPhoto={settings.reception_photo}
         dressCodeTitle={settings.dress_code_title}
         dressCodeSubtitle={settings.dress_code_subtitle}
         dressCodeDesc={settings.dress_code_desc}
@@ -134,7 +136,7 @@ export default async function Home() {
       {/* Principal Sponsors Section (NEW) */}
       <PrincipalSponsors sponsors={sponsors} />
 
-      {/* The Cast & Entourage */}
+      {/* The Cast */}
       <Entourage members={entourage} />
 
       {/* Gift Suggestion Section (NEW) */}

@@ -684,7 +684,7 @@ export default function AdminPage() {
             { id: 'gifts', label: 'Gift Suggestions (GCash / Maya / Bank)', count: gifts.length },
             { id: 'faqs', label: 'FAQ Questions', count: faqs.length },
             { id: 'episodes', label: 'Our Story Episodes', count: episodes.length },
-            { id: 'entourage', label: 'Cast / Entourage', count: entourage.length },
+            { id: 'entourage', label: 'The Cast', count: entourage.length },
           ].map((tab) => (
             <button
               key={tab.id}
@@ -1417,6 +1417,47 @@ export default function AdminPage() {
                       onChange={(e) => setSettings({ ...settings, ceremony_map_link: e.target.value })}
                       style={{ padding: '0.8rem', background: '#111', border: '1px solid var(--gray-medium)', color: '#fff', borderRadius: '4px' }}
                     />
+
+                    {/* Ceremony Photo */}
+                    <div style={{ marginTop: '0.5rem', paddingTop: '0.8rem', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+                      <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: 'var(--gray-light)', marginBottom: '0.4rem' }}>
+                        Ceremony Photo (Optional)
+                      </label>
+                      {settings.ceremony_photo && (
+                        <div style={{ height: '110px', position: 'relative', borderRadius: '6px', overflow: 'hidden', marginBottom: '0.5rem', background: '#222' }}>
+                          <Image src={settings.ceremony_photo} alt="Ceremony Venue" fill style={{ objectFit: 'cover' }} />
+                        </div>
+                      )}
+                      <input
+                        type="file"
+                        accept="image/*"
+                        disabled={uploadingField === 'ceremony_photo'}
+                        onChange={async (e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            setUploadingField('ceremony_photo');
+                            try {
+                              await handleFileUpload(file, (url) => {
+                                handleSaveSettings({ ceremony_photo: url });
+                              });
+                            } finally {
+                              setUploadingField(null);
+                            }
+                          }
+                        }}
+                        style={{ fontSize: '0.8rem', marginBottom: '0.4rem' }}
+                      />
+                      {uploadingField === 'ceremony_photo' && (
+                        <span style={{ fontSize: '0.75rem', color: '#ffb703', display: 'block', marginBottom: '0.3rem' }}>⏳ Uploading ceremony photo...</span>
+                      )}
+                      <input
+                        type="text"
+                        placeholder="Or paste ceremony image URL (https://...)"
+                        value={settings.ceremony_photo || ''}
+                        onChange={(e) => setSettings({ ...settings, ceremony_photo: e.target.value })}
+                        style={{ padding: '0.6rem', background: '#111', border: '1px solid var(--gray-medium)', color: '#fff', borderRadius: '4px', fontSize: '0.8rem', width: '100%' }}
+                      />
+                    </div>
                   </div>
                 </div>
 
@@ -1451,6 +1492,47 @@ export default function AdminPage() {
                       onChange={(e) => setSettings({ ...settings, reception_map_link: e.target.value })}
                       style={{ padding: '0.8rem', background: '#111', border: '1px solid var(--gray-medium)', color: '#fff', borderRadius: '4px' }}
                     />
+
+                    {/* Reception Photo */}
+                    <div style={{ marginTop: '0.5rem', paddingTop: '0.8rem', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+                      <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: 'var(--gray-light)', marginBottom: '0.4rem' }}>
+                        Reception Photo (Optional)
+                      </label>
+                      {settings.reception_photo && (
+                        <div style={{ height: '110px', position: 'relative', borderRadius: '6px', overflow: 'hidden', marginBottom: '0.5rem', background: '#222' }}>
+                          <Image src={settings.reception_photo} alt="Reception Venue" fill style={{ objectFit: 'cover' }} />
+                        </div>
+                      )}
+                      <input
+                        type="file"
+                        accept="image/*"
+                        disabled={uploadingField === 'reception_photo'}
+                        onChange={async (e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            setUploadingField('reception_photo');
+                            try {
+                              await handleFileUpload(file, (url) => {
+                                handleSaveSettings({ reception_photo: url });
+                              });
+                            } finally {
+                              setUploadingField(null);
+                            }
+                          }
+                        }}
+                        style={{ fontSize: '0.8rem', marginBottom: '0.4rem' }}
+                      />
+                      {uploadingField === 'reception_photo' && (
+                        <span style={{ fontSize: '0.75rem', color: '#ffb703', display: 'block', marginBottom: '0.3rem' }}>⏳ Uploading reception photo...</span>
+                      )}
+                      <input
+                        type="text"
+                        placeholder="Or paste reception image URL (https://...)"
+                        value={settings.reception_photo || ''}
+                        onChange={(e) => setSettings({ ...settings, reception_photo: e.target.value })}
+                        style={{ padding: '0.6rem', background: '#111', border: '1px solid var(--gray-medium)', color: '#fff', borderRadius: '4px', fontSize: '0.8rem', width: '100%' }}
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1462,10 +1544,12 @@ export default function AdminPage() {
                     ceremony_time: settings.ceremony_time || '',
                     ceremony_address: settings.ceremony_address || '',
                     ceremony_map_link: settings.ceremony_map_link || '',
+                    ceremony_photo: settings.ceremony_photo || '',
                     reception_venue: settings.reception_venue || '',
                     reception_time: settings.reception_time || '',
                     reception_address: settings.reception_address || '',
                     reception_map_link: settings.reception_map_link || '',
+                    reception_photo: settings.reception_photo || '',
                   })
                 }
                 className="btn-primary"
@@ -2186,7 +2270,7 @@ export default function AdminPage() {
           <div>
             <div style={{ background: 'var(--gray-dark)', border: '1px solid var(--gray-medium)', borderRadius: '12px', padding: '1.5rem', marginBottom: '2rem' }}>
               <h3 style={{ fontSize: '1.3rem', fontWeight: 700, marginBottom: '1rem' }}>
-                Add Cast / Entourage Member
+                Add Cast Member
               </h3>
 
               <form

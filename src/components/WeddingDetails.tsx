@@ -8,10 +8,12 @@ interface WeddingDetailsProps {
   ceremonyVenue?: string;
   ceremonyAddress?: string;
   ceremonyMapLink?: string;
+  ceremonyPhoto?: string;
   receptionTime?: string;
   receptionVenue?: string;
   receptionAddress?: string;
   receptionMapLink?: string;
+  receptionPhoto?: string;
   dressCodeTitle?: string;
   dressCodeSubtitle?: string;
   dressCodeDesc?: string;
@@ -23,10 +25,12 @@ export default function WeddingDetails({
   ceremonyVenue = "Manila Cathedral",
   ceremonyAddress = "Cabildo cor. Beaterio St., Intramuros, Manila, Philippines",
   ceremonyMapLink = "https://maps.google.com/?q=Manila+Cathedral",
+  ceremonyPhoto,
   receptionTime = "6:00 PM",
   receptionVenue = "The Manila Hotel",
   receptionAddress = "1 Rizal Park, Ermita, Manila, Philippines",
   receptionMapLink = "https://maps.google.com/?q=The+Manila+Hotel",
+  receptionPhoto,
   dressCodeTitle = "Formal Attire",
   dressCodeSubtitle = "Cinematic Formal",
   dressCodeDesc = "Gentlemen: Suit and tie or Barong Tagalog.\nLadies: Long evening gown in dark cinematic colors (Black, Deep Red, Emerald).",
@@ -151,9 +155,54 @@ export default function WeddingDetails({
             <p style={{ fontSize: '1.3rem', fontWeight: 700, color: '#fff', marginBottom: '0.5rem' }}>
               {ceremonyVenue}
             </p>
-            <p style={{ color: 'var(--gray-light)', marginBottom: '2rem', lineHeight: 1.6, fontSize: '0.95rem', whiteSpace: 'pre-line' }}>
+            <p style={{ color: 'var(--gray-light)', marginBottom: ceremonyPhoto ? '1.2rem' : '2rem', lineHeight: 1.6, fontSize: '0.95rem', whiteSpace: 'pre-line' }}>
               {ceremonyAddress}
             </p>
+
+            {ceremonyPhoto && (
+              <div style={{ marginBottom: '1.2rem' }}>
+                <div
+                  onClick={() => setZoomedImage(ceremonyPhoto)}
+                  style={{
+                    position: 'relative',
+                    width: '100%',
+                    height: '190px',
+                    borderRadius: '8px',
+                    overflow: 'hidden',
+                    border: '1px solid rgba(255,255,255,0.18)',
+                    cursor: 'zoom-in',
+                    boxShadow: '0 6px 18px rgba(0,0,0,0.5)',
+                  }}
+                  title="Click to zoom ceremony venue photo"
+                >
+                  <Image
+                    src={ceremonyPhoto}
+                    alt={ceremonyVenue || 'Ceremony Venue'}
+                    fill
+                    style={{ objectFit: 'cover' }}
+                  />
+                  <div
+                    style={{
+                      position: 'absolute',
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      background: 'linear-gradient(to top, rgba(0,0,0,0.85), transparent)',
+                      padding: '8px',
+                      fontSize: '0.78rem',
+                      color: '#fff',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '5px',
+                    }}
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
+                    <span>Click to view venue photo</span>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
           <a
             href={ceremonyMapLink}
@@ -203,9 +252,54 @@ export default function WeddingDetails({
             <p style={{ fontSize: '1.3rem', fontWeight: 700, color: '#fff', marginBottom: '0.5rem' }}>
               {receptionVenue}
             </p>
-            <p style={{ color: 'var(--gray-light)', marginBottom: '2rem', lineHeight: 1.6, fontSize: '0.95rem', whiteSpace: 'pre-line' }}>
+            <p style={{ color: 'var(--gray-light)', marginBottom: receptionPhoto ? '1.2rem' : '2rem', lineHeight: 1.6, fontSize: '0.95rem', whiteSpace: 'pre-line' }}>
               {receptionAddress}
             </p>
+
+            {receptionPhoto && (
+              <div style={{ marginBottom: '1.2rem' }}>
+                <div
+                  onClick={() => setZoomedImage(receptionPhoto)}
+                  style={{
+                    position: 'relative',
+                    width: '100%',
+                    height: '190px',
+                    borderRadius: '8px',
+                    overflow: 'hidden',
+                    border: '1px solid rgba(255,255,255,0.18)',
+                    cursor: 'zoom-in',
+                    boxShadow: '0 6px 18px rgba(0,0,0,0.5)',
+                  }}
+                  title="Click to zoom reception venue photo"
+                >
+                  <Image
+                    src={receptionPhoto}
+                    alt={receptionVenue || 'Reception Venue'}
+                    fill
+                    style={{ objectFit: 'cover' }}
+                  />
+                  <div
+                    style={{
+                      position: 'absolute',
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      background: 'linear-gradient(to top, rgba(0,0,0,0.85), transparent)',
+                      padding: '8px',
+                      fontSize: '0.78rem',
+                      color: '#fff',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '5px',
+                    }}
+                  >
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line><line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line></svg>
+                    <span>Click to view venue photo</span>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
           <a
             href={receptionMapLink}
