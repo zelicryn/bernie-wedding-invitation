@@ -2099,12 +2099,9 @@ export default function AdminPage() {
                             padding: '4px 10px',
                             cursor: 'pointer',
                             fontSize: '0.85rem',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '4px',
                           }}
                         >
-                          ✏️ Edit
+                          Edit
                         </button>
                         <button
                           type="button"
